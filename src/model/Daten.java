@@ -13,7 +13,7 @@ public class Daten {
 	}
 
 	public void setN(int n) {
-		System.out.println("DatenSet: "+this.n);
+//		System.out.println("DatenSet: "+this.n);
 		this.n = n;
 	}
 	

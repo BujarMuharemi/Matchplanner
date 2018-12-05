@@ -3,7 +3,6 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import model.*;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.GridBagLayout;
@@ -18,8 +17,9 @@ import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 
-public class NewView extends JFrame {
+public class NewView extends JDialog {
 
 	private static final long serialVersionUID = 1L;	
 	private JPanel contentPane;
@@ -30,7 +30,12 @@ public class NewView extends JFrame {
 
 	NewViewTabelle tabelle = new NewViewTabelle(4);
 	
-
+	private boolean erstellt = false;
+	
+	public boolean getErstellt() {
+		return erstellt;
+	}
+	
 	public Mannschaften[] getTeams() {
 		return tabelle.getTeams();
 	}
@@ -146,7 +151,7 @@ public class NewView extends JFrame {
 				// und in Hauptview neue Tabelle erstellt!
 
 				// tabelle.sendTeams();
-
+				erstellt=true;
 				main.updateTeams();
 				dispose();
 			}
@@ -155,6 +160,5 @@ public class NewView extends JFrame {
 		gbc_btnNewButton.gridx = 0;
 		gbc_btnNewButton.gridy = 3;
 		contentPane.add(btnErstellen, gbc_btnNewButton);
-
 	}
 }

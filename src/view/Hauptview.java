@@ -3,6 +3,10 @@ package view;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
+
 import model.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -13,54 +17,93 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.WindowFocusListener;
+import java.io.File;
+
+
+
+/*
+	6 Teams
+	10 Spieltage
+	3 Spiele pro Tag
+	30 Spiele insgesammt
+*/
 
 public class Hauptview {
 
 	int tabelleNum = 0;
 	private JFrame frame;
+
 	boolean gespeichert = false;
 	boolean geoffnet = false;
-	private Mannschaften[] teams;
 
+	private Mannschaften[] teams;
+	TabelleSpielTage spieltageData = new TabelleSpielTage(teams);
 	public Daten b = new Daten(5);
-	beendenview beendenview = new beendenview();
+	public BeendenView closeView = new BeendenView();
 	NewView newView = new NewView();
 	Tabelle table;
 
-	TabelleSpielTage spieltageData = new TabelleSpielTage(newView.getTeams());
+	JMenu menuDatei = new JMenu("Datei");
+	JMenu mnextra = new JMenu("Edit/Bearbeiten");
+
+	JMenuItem mnitNeu = new JMenuItem("Neu");
+	JMenuItem mnitOffnen = new JMenuItem("Öffnen");
+	JMenuItem mnitSpeichern = new JMenuItem("Speichern");
+	JMenuItem mnitSpeichernunter = new JMenuItem("Speichern unter");
+	JMenuItem mnitBeenden = new JMenuItem("Beenden");
+	JMenuItem mnitDrucken = new JMenuItem("Drucken");
+	JMenuItem mnitClose = new JMenuItem("Schließen");
+
+	JMenuItem mnitMannschaftba = new JMenuItem("Mannschaft bearbeiten");
+	JMenuItem mnitSpieltag = new JMenuItem("Spieltag bearbeiten");
+
+	JPanel Zentralesicht = new JPanel();
+	JPanel SpieltagAnsicht = new JPanel();
+
+	public void closedMatchplan() {
+		setMatchplan(false);
+	}
+
+	public void openedMatchplan() {
+		setMatchplan(true);
+	}
+
+	private void setMatchplan(boolean b) {
+		mnitNeu.setEnabled(!b);
+		mnitOffnen.setEnabled(!b);
+		mnitSpeichern.setEnabled(b);
+		mnitSpeichernunter.setEnabled(b);
+		mnitDrucken.setEnabled(b);
+		mnitClose.setEnabled(b);
+
+		mnitMannschaftba.setEnabled(b);
+		mnitSpieltag.setEnabled(b);
+
+		Zentralesicht.setVisible(b);
+		SpieltagAnsicht.setVisible(b);
+	}
 
 	// Mannschaften setten
-		
-	public void setMan(Mannschaften[] m) {
-		teams = m;
-		
-		for (int i = 0; i < m.length; i++) {
-			// System.out.println(m[i].getName());
-		}
+	public void setMan(Mannschaften[] m) {		
+		teams = m;		
 		// System.out.println("setMan"+getSpieltage());
 		// tabel.addSize(getSpieltage());
 		// spielTage = getSpieltage();
 
 		// table.addSize(spielTage);
 		// frame.repaint();
+
 		updateTeams();
 		// initialize();
 
 	}
 
-	public void showTeams() {
-		for (Mannschaften m : teams) {
-			System.out.println(m.getName());
-		}
-	}
-
 	public void updateTeams() {
-		System.out.println("updated Teams");
-		spieltageData = new TabelleSpielTage(newView.getTeams());
-		spieltageData.addTeam(newView.getTeams());
 		spieltageData = new TabelleSpielTage(teams);
-		frame.repaint();
+		// Doesnt get called in real event
+		
 	}
+	
 
 	// spieltage wird berrechnet und weiter gegeben
 	public int getSpieltage() {
@@ -87,9 +130,37 @@ public class Hauptview {
 
 	private void initialize() {
 		frame = new JFrame();
+		
 		frame.addWindowFocusListener(new WindowFocusListener() {
 			public void windowGainedFocus(WindowEvent arg0) {
 				table.addSize(newView.getSpieltage());
+//				for (int i = 0; i < newView.getSpieltage(); i++) {
+//					spieltageData.addRow();//					
+//				}
+//				
+				if(newView.getErstellt()) {
+					spieltageData.addTeam(newView.getTeams());
+//					spieltageData = new TabelleSpielTage(newView.getTeams());
+					spieltageData.createSpieltage();
+				}
+				
+				if(geoffnet) {
+					System.out.println("Geofenet");
+				}
+												
+				//geoffnet = true;
+				
+//				System.out
+//						.println("Close: gespeichert-" + gespeichert + ",buttonchoice: " + closeView.getButtonChoice());
+//				System.out.println("beendenwas: " + closeView.getBeendenWas());
+
+				if (closeView.getButtonChoice() == 1) {					
+					gespeichert = true;
+					closedMatchplan();
+					closeView.setButtonChoice(0);
+				} else {
+
+				}
 			}
 
 			public void windowLostFocus(WindowEvent arg0) {
@@ -105,91 +176,120 @@ public class Hauptview {
 		frame.setJMenuBar(menubar);
 
 		// Menubar Datei erstellt
-		JMenu mndatei = new JMenu("Datei");
-		menubar.add(mndatei);
+
+		menubar.add(menuDatei);
 
 		// Menubar Extra erstellt
-		JMenu mnextra = new JMenu("Extra");
+
 		menubar.add(mnextra);
 
 		// Elemente der Menubar werden erstellt und den jewaligen Menu elemente
 		// hinzugefuegt
-		JMenuItem mnitNeu = new JMenuItem("Neu");
+
 		mnitNeu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFrame neuframe = new JFrame();
-				
 				newView.setVisible(true);
+				openedMatchplan();
+				geoffnet = true;
+				gespeichert = false;
 			}
 		});
-		mndatei.add(mnitNeu);
+		menuDatei.add(mnitNeu);
 
-		JMenuItem mnitOffnen = new JMenuItem("�ffnen");
 		mnitOffnen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				openedMatchplan();
+				geoffnet = true;
+				gespeichert = false;
 			}
 		});
-		mndatei.add(mnitOffnen);
+		menuDatei.add(mnitOffnen);
 
-		if (geoffnet) {
-			JMenuItem mnitSpeichern = new JMenuItem("Speichern");
-			mnitSpeichern.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					/*
-					 * JFileChooser fc = new JFileChooser(); FileFilter filter = new
-					 * FileNameExtensionFilter("XLS File","xls"); fc.setFileFilter(filter);
-					 */
+		mnitSpeichern.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gespeichert = !gespeichert;
+			}
+		});
+		menuDatei.add(mnitSpeichern);
+
+		mnitSpeichernunter.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// meinnssssssssss!!!!!!!!!
+				JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+				jfc.setApproveButtonText("Save");
+				FileFilter filter = new FileNameExtensionFilter("XLS", "xls");
+				FileFilter filter2 = new FileNameExtensionFilter("CSV", "csv");
+				FileFilter filter3 = new FileNameExtensionFilter("XLSX", "xlsx");
+				jfc.addChoosableFileFilter(filter);
+				jfc.addChoosableFileFilter(filter2);
+				jfc.addChoosableFileFilter(filter3);
+
+				jfc.setFileFilter(filter2);
+				int returnValue = jfc.showSaveDialog(null);
+
+				if (returnValue == JFileChooser.APPROVE_OPTION) {
+
+					File selectedFile = jfc.getSelectedFile();
+					System.out.println(selectedFile.getAbsolutePath());
 				}
-			});
-			mndatei.add(mnitSpeichern);
+			}
+		});
 
-			JMenuItem mnitSpeichernunter = new JMenuItem("Speichern unter");
-			mnitSpeichernunter.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					JOptionPane.showMessageDialog(null, " geöffneten Spielplan als neue Datei speichern ");
+		mnitClose.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				System.out
+						.println("Close: gespeichert-" + gespeichert + ",buttonchoice: " + closeView.getButtonChoice());
+				System.out.println("beendenwas: " + closeView.getBeendenWas());
+				if (gespeichert == true) {
+//					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+					geoffnet = false;
+					closedMatchplan();
+				} else {
+					closeView.setVisible(true);
 				}
-			});
-			mndatei.add(mnitSpeichernunter);
+			}
+		});
 
-			JMenuItem mnitMannschaftba = new JMenuItem("Mannschaft bearbeiten");
-			mnitMannschaftba.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					JOptionPane.showMessageDialog(null, " Manschaften ver�ndern ");
-				}
-			});
-			mnextra.add(mnitMannschaftba);
+		mnitMannschaftba.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, " Manschaften verändern ");
+			}
+		});
+		mnextra.add(mnitMannschaftba);
 
-			JMenuItem mnitSpieltag = new JMenuItem("Spieltag bearbeiten");
-			mnitSpieltag.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					JOptionPane.showMessageDialog(null, " Spieltage festlegen / ver�ndern ");
-				}
-			});
+		mnitSpieltag.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, " Spieltage festlegen / verändern ");
+			}
+		});
 
-			mnextra.add(mnitSpieltag);
-			frame.repaint();
-		}
-
-		JMenuItem mnitBeenden = new JMenuItem("Beenden");
 		mnitBeenden.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (gespeichert == true) {
-					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+//					frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 				} else {
-					beendenview.setVisible(true);
+					closeView.setVisible(true);
 				}
 			}
 		});
-		mndatei.add(mnitBeenden);
+
+		menuDatei.add(mnitSpeichernunter);
+		menuDatei.add(mnitDrucken);
+		menuDatei.add(mnitClose);
+
+		mnextra.add(mnitSpieltag);
+		menuDatei.add(mnitBeenden);
+
+		closedMatchplan(); // ist default wenn nix geöffnet ist
 
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 700, 80, 0 };
-		gridBagLayout.rowHeights = new int[] { 539, 0 };
+		gridBagLayout.columnWidths = new int[] {750, 80, 30};
+		gridBagLayout.rowHeights = new int[] {600, 0};
 		gridBagLayout.columnWeights = new double[] { 0.0, 0.0 };
 		gridBagLayout.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
 		frame.getContentPane().setLayout(gridBagLayout);
 
-		JPanel Zentralesicht = new JPanel();
 		GridBagConstraints gbc_Zentralesicht = new GridBagConstraints();
 		gbc_Zentralesicht.fill = GridBagConstraints.BOTH;
 		gbc_Zentralesicht.insets = new Insets(0, 0, 0, 5);
@@ -206,9 +306,8 @@ public class Hauptview {
 
 		// Tabellen werden erstellt
 		table = new Tabelle(b.getN());
-		spieltageData = new TabelleSpielTage(newView.getTeams());
-		spieltageData.addTeam(newView.getTeams());
-		System.out.println("row count"+spieltageData.getRowCount());
+//		spieltageData = new TabelleSpielTage(newView.getTeams());
+//		spieltageData.addTeam(newView.getTeams());
 
 		JTable tabelle = new JTable(table);
 
@@ -217,8 +316,6 @@ public class Hauptview {
 		JScrollPane SpielTagScrollen = new JScrollPane(tabelle);
 		JScrollPane ZentralScrollen = new JScrollPane(spielTageTabelle);
 
-		JPanel SpieltagAnsicht = new JPanel();
-
 		frame.getContentPane().add(SpieltagAnsicht, gbc_SpieltagAnsicht);
 		SpieltagAnsicht.setLayout(new BorderLayout(0, 0));
 
@@ -226,40 +323,43 @@ public class Hauptview {
 
 		Zentralesicht.add(ZentralScrollen);
 
-//		System.out.println("DatenGet" + b.getN());
-		int a = b.getN();
-		table.addSize(a);		
+		System.out.println("DatenGet" + b.getN());
+//		int a = b.getN();
+//		table.addSize(a);
 		frame.repaint();
-		// System.out.println("Folgende Teams bekommen:");
-		// if (teams != null) {
-		// for (int i = 0; i < teams.length; i++) {
-		// System.out.println("\t" + teams[i].getName());
-		// }
-		// }
 
 		tabelle.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (tabelle.getSelectedRow() > -1) {
-					Zentralesicht.repaint();
+//					Zentralesicht.repaint();
+					spieltageData.updateSpieltage();
+					spieltageData.showSpieltag(tabelle.getSelectedRow());
 				}
+				if(teams!=null) {
+					for (int i = 0; i < teams.length; i++) {
+//						System.out.println(teams[i].getName());
+					}
+				}
+//				closedMatchplan();
+//				openedMatchplan();
 				// System.out.println(">" + spielTage);
 				// System.out.println("DatenGet->"+b.getN());
 				// table.addSize(newView.getSpieltage());
-				spieltageData = new TabelleSpielTage(newView.getTeams());
-				spieltageData.addTeam(newView.getTeams());
 			}
 		});
 
-		// tabelle.setTableHeader(null);
-
 	}
 
-	public void setgespeichert(boolean n) {
+	public void setGespeichert(boolean n) {
 		geoffnet = n;
 	}
 
-	public boolean getgespeichert() {
+	public boolean getGespeichert() {
 		return geoffnet;
+	}
+
+	public void setGeoffnet(boolean n) {
+		geoffnet = n;
 	}
 
 }

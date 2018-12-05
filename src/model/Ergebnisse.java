@@ -26,5 +26,10 @@ public class Ergebnisse {
 	public void setErg2(int erg2) {
 		this.erg2 = erg2;
 	}
+	
+	public String toString() {
+		return this.erg1+":"+this.erg2;
+		
+	}
 
 }
