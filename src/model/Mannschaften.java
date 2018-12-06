@@ -3,7 +3,6 @@ package model;
 public class Mannschaften {
 
 	private String name;
-//	private int id;
 
 	public Mannschaften(String name) {
 		

@@ -57,7 +57,7 @@ public class NewViewTabelle extends AbstractTableModel {
 		if (ColumIndex == 0) {
 			return rowIndex + 1;
 		} else {
-			String name = (teams[rowIndex] != null) ? teams[rowIndex].getName() : "<bitte aendern>";
+			String name = (teams[rowIndex] != null) ? teams[rowIndex].getName() : "<bitte ändern>";
 			return name;
 		}
 	}
