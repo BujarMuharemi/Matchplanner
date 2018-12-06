@@ -26,9 +26,8 @@ import java.io.File;
 	30 Spiele insgesammt
 */
 
-/* FIXME: Bug#1: <bitte ändern> wird in ZentralAnsicht gezeigt, ob wohl Name des Teams eingegeben wurde
- * FIXME: Bug#2: Hin/Rückspiele algo muss überarbeitet werden
- * FIXME: Bug#3: Wenn noch keine Datei festgelegt ist, muss SaveAs ausgelöst werden, um nach einem Speicherort zu fragen
+/* FIXME: Bug#2: Hin/Rückspiele algo muss überarbeitet werden  
+ * FIXME: Bug#3: Save öffnet sich ein zweites mal nach öffnen  
  * 
  * TODO: Feature#1: Anzahl der Spieltage auf JLabel in ZentralAnsicht zeigen
  * TODO: Feature-Teil2#1: Über die Menüeinträge edit/bearbeiten, es ermöglichen die Spieltag tabelle zu bearbeiten(und speichern flag=false)
@@ -49,7 +48,7 @@ public class Hauptview {
 	NewView newView = new NewView();
 	Tabelle table;
 
-	JMenu menuDatei = new JMenu("	Datei");
+	JMenu menuDatei = new JMenu("Datei");
 	JMenu mnextra = new JMenu("Edit/Bearbeiten");
 
 	JMenuItem mnitNeu = new JMenuItem("Neu");
@@ -88,7 +87,28 @@ public class Hauptview {
 		Zentralesicht.setVisible(b);
 		SpieltagAnsicht.setVisible(b);
 	}
+	
+	private void saveWindow() {
+		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+		jfc.setApproveButtonText("Save");
+		FileFilter filter = new FileNameExtensionFilter("XLS", "xls");
+		FileFilter filter2 = new FileNameExtensionFilter("CSV", "csv");
+		FileFilter filter3 = new FileNameExtensionFilter("XLSX", "xlsx");
+		jfc.addChoosableFileFilter(filter);
+		jfc.addChoosableFileFilter(filter2);
+		jfc.addChoosableFileFilter(filter3);
 
+		jfc.setFileFilter(filter2);
+		int returnValue = jfc.showSaveDialog(null);
+
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+
+			File selectedFile = jfc.getSelectedFile();
+			System.out.println(selectedFile.getAbsolutePath());
+		}
+	}
+	
+	
 	// Mannschaften setten
 	public void setMan(Mannschaften[] m) {
 		teams = m;
@@ -182,7 +202,11 @@ public class Hauptview {
 				newView.setVisible(true);
 				openedMatchplan();
 				geoffnet = true;
-				gespeichert = false;
+				//gespeichert = false;
+				if(gespeichert){				
+					spieltageData.resetSpielTage();
+					
+				}
 			}
 		});
 		menuDatei.add(mnitNeu);
@@ -192,36 +216,25 @@ public class Hauptview {
 				openedMatchplan();
 				geoffnet = true;
 				gespeichert = false;
+				
 			}
 		});
 		menuDatei.add(mnitOffnen);
 
 		mnitSpeichern.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				gespeichert = !gespeichert;
+				if(!gespeichert) {
+					saveWindow();
+				}
+				
+				//gespeichert = !gespeichert;
 			}
 		});
 		menuDatei.add(mnitSpeichern);
 
 		mnitSpeichernunter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-				jfc.setApproveButtonText("Save");
-				FileFilter filter = new FileNameExtensionFilter("XLS", "xls");
-				FileFilter filter2 = new FileNameExtensionFilter("CSV", "csv");
-				FileFilter filter3 = new FileNameExtensionFilter("XLSX", "xlsx");
-				jfc.addChoosableFileFilter(filter);
-				jfc.addChoosableFileFilter(filter2);
-				jfc.addChoosableFileFilter(filter3);
-
-				jfc.setFileFilter(filter2);
-				int returnValue = jfc.showSaveDialog(null);
-
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-
-					File selectedFile = jfc.getSelectedFile();
-					System.out.println(selectedFile.getAbsolutePath());
-				}
+				saveWindow();
 			}
 		});
 
