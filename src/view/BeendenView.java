@@ -79,7 +79,7 @@ public class BeendenView extends JFrame {
 				buttonChoice = 1;
 				beendenWas=true;
 				dispose();
-				// Methode aufrufen um flaggs zur�ckzu setzten!!
+				// Methode aufrufen um flaggs zurückzu setzten!!
 			}
 		});
 		panel_2.add(btnJa);
@@ -87,7 +87,6 @@ public class BeendenView extends JFrame {
 		JButton btnNein = new JButton("Nein");
 		btnNein.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Programm schlie�en!! --------------------------------------------- meinnsss
 //				System.exit(0);
 				buttonChoice = 0;
 				beendenWas=true;
@@ -99,7 +98,7 @@ public class BeendenView extends JFrame {
 		JButton btnAbbrechen = new JButton("Abbrechen");
 		btnAbbrechen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Das Fenster beendenview schlie�en und programm weiter arbeiten k�nnen!
+				// Das Fenster beendenview schließen und programm weiter arbeiten können!
 				buttonChoice = -1;
 				beendenWas=true;
 				dispose();
