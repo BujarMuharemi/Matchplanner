@@ -19,7 +19,7 @@ import java.awt.Insets;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
 
-/*
+/* Idealwerte
 	6 Teams
 	10 Spieltage
 	3 Spiele pro Tag
