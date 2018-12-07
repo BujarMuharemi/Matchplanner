@@ -28,7 +28,6 @@ import java.io.File;
 
 /*
  * FIXME-Bug#4: Tage aufwärts zählen, mit uhrzeit ?
- * FIXME-BUG#5: Bei Nein und beendne/close muss plan/programm geschlossen werden
  * TODO-Teil2: Änderung an Teams/Dates möglich machen, gespeichert flag zurücksetzen
  * 
  * TODO-Feature#1: Anzahl der Spieltage auf JLabel in ZentralAnsicht zeigen
@@ -213,6 +212,13 @@ public class Hauptview {
 					} else {
 						closeNoSave = false;
 					}
+				}else if(closeView.getButtonChoice() == 0) {
+					if(beendeProgramm) {
+						System.exit(0);
+					}else if(closeNoSave) {
+						closedMatchplan();
+						closeNoSave=false;
+					}
 				}
 			}
 
@@ -266,7 +272,7 @@ public class Hauptview {
 					saveWindow();
 				} else {
 					gespeichert = true;
-				}
+				} 
 
 			}
 		});
