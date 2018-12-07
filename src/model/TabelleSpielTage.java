@@ -14,8 +14,11 @@ public class TabelleSpielTage extends AbstractTableModel {
 	private Mannschaften[] teams;
 
 	String[] columNames = { "Team1", "Team2", "Ergebnis", "Datum" };
-	
+
 	int spieleProTag = 0;
+
+	private boolean editTeams = false;
+	private boolean editDates = false;
 
 	public TabelleSpielTage(Mannschaften[] teams) {
 		this.teams = teams;
@@ -32,21 +35,31 @@ public class TabelleSpielTage extends AbstractTableModel {
 		}
 		fireTableStructureChanged();
 	}
-	
+
+	public void editTeams() {
+		editTeams = true;
+		editDates = false;
+	}
+
+	public void editDates() {
+		editDates = true;
+		editTeams = false;
+	}
+
 	public void resetSpielTage() {
 		for (Spiel spiel : spielTage) {
-			spiel=null;
+			spiel = null;
 		}
 	}
 
 	public void showSpieltag(int n) {
-		spielTage=spielTageOutput;
+		spielTage = spielTageOutput;
 //		System.out.println("N:"+n);
-		
+
 		List<Spiel> temp = new ArrayList<>();
-		
+
 		for (int i = 0; i < spieleProTag; i++) {
-			temp.add(spielTageOutput.get(n+i));
+			temp.add(spielTageOutput.get(n + i));
 		}
 		spielTageOutput = temp;
 		fireTableStructureChanged();
@@ -74,9 +87,9 @@ public class TabelleSpielTage extends AbstractTableModel {
 		}
 		fireTableStructureChanged();
 	}
-	
+
 	public void updateSpieltage() {
-		spielTageOutput=spielTage;
+		spielTageOutput = spielTage;
 	}
 
 	public void createSpieltage() {
@@ -86,7 +99,6 @@ public class TabelleSpielTage extends AbstractTableModel {
 		int spieleGesamt = (teams.length / 2) * spielTageInt;
 		spieleProTag = spieleGesamt / spielTageInt;
 
-		
 //		System.out.println("■■■■■■■■■■■■\nSpielTage: " + spielTageInt + "\tSpielegesamt: " + spieleGesamt
 //				+ "\tSPieleProTag: " + spieleProTag);
 		// hinspiel
@@ -94,7 +106,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 
 			for (int k = j + 1; k < teams.length; k++) {
 //				System.out.println((j + 1) + ":" + (k + 1));		
-				
+
 				addRow(teams[j], teams[k], new Ergebnisse(0, 0), new Date());
 			}
 
@@ -112,7 +124,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 		}
 
 		fireTableStructureChanged();
-		spielTage=spielTageOutput;
+		spielTage = spielTageOutput;
 //		System.out.println("Length" + spielTageOutput.size());
 	}
 
@@ -142,9 +154,37 @@ public class TabelleSpielTage extends AbstractTableModel {
 		return n;
 	}
 
+	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+		if (spielTageOutput != null) {
+			if (columnIndex == 0) {
+				spielTageOutput.get(rowIndex).setM1(new Mannschaften(aValue.toString()));
+			} else if (columnIndex == 1) {
+				spielTageOutput.get(rowIndex).setM2(new Mannschaften(aValue.toString()));
+			} else if (columnIndex == 2) {
+				Ergebnisse ergbe = new Ergebnisse(0, 0); // TODO#3: string auf splitten und ergebniss in ints
+				spielTageOutput.get(rowIndex).setErg(ergbe);
+			} else if (columnIndex == 1) {
+				Date d = new Date();
+				spielTageOutput.get(rowIndex).setDate(d);
+			}
+
+			// System.out.println(rowIndex + ":" + teams[rowIndex].getName());
+		}
+	}
+
 	@Override
 	public String getColumnName(int index) {
 		return columNames[index];
+	}
+
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		boolean a = false;
+		if (editDates && columnIndex == 4) {
+			a = true; //FIXME#2: dates können nicht bearbeitet werden
+		} else if (editTeams && (columnIndex == 0 || columnIndex == 1)) {
+			a = true;
+		}
+		return a;
 	}
 
 }

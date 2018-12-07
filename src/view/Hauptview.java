@@ -299,15 +299,15 @@ public class Hauptview {
 		});
 
 		mnitMannschaftba.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, " Manschaften verändern ");
+			public void actionPerformed(ActionEvent e) {				
+				spieltageData.editTeams();
 			}
 		});
 		mnextra.add(mnitMannschaftba);
 
 		mnitSpieltag.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, " Spieltage festlegen / verändern ");
+				spieltageData.editTeams();
 			}
 		});
 
