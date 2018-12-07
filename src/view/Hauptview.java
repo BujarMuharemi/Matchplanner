@@ -19,18 +19,19 @@ import java.awt.Insets;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
 
-/*
+/* Idealwerte
 	6 Teams
 	10 Spieltage
 	3 Spiele pro Tag
 	30 Spiele insgesammt
 */
 
-/* FIXME: Bug#2: Hin/Rückspiele algo muss überarbeitet werden  
- * FIXME: Bug#3: Save öffnet sich ein zweites mal nach öffnen  
+/*
+ * FIXME-Bug#4: Tage aufwärts zählen, mit uhrzeit ?
+ * TODO-Teil2: Änderung an Teams/Dates möglich machen, gespeichert flag zurücksetzen
  * 
- * TODO: Feature#1: Anzahl der Spieltage auf JLabel in ZentralAnsicht zeigen
- * TODO: Feature-Teil2#1: Über die Menüeinträge edit/bearbeiten, es ermöglichen die Spieltag tabelle zu bearbeiten(und speichern flag=false)
+ * TODO-Feature#1: Anzahl der Spieltage auf JLabel in ZentralAnsicht zeigen
+ * TODO-Feature#2: Über die Menüeinträge edit/bearbeiten, es ermöglichen die Spieltag tabelle zu bearbeiten(und speichern flag=false)
  * */
 
 public class Hauptview {
@@ -39,9 +40,12 @@ public class Hauptview {
 	private JFrame frame;
 
 	boolean gespeichert = false;
-	boolean geoffnet = false;
+	boolean dateiGeoffnet = false;
 
 	boolean dataeiGespeichert = false;
+
+	boolean closeNoSave = false;
+	boolean beendeProgramm = false;
 
 	private Mannschaften[] teams;
 	TabelleSpielTage spieltageData = new TabelleSpielTage(teams);
@@ -67,6 +71,12 @@ public class Hauptview {
 	JPanel Zentralesicht = new JPanel();
 	JPanel SpieltagAnsicht = new JPanel();
 
+	private void resetFlags() {
+		gespeichert = false;
+		dateiGeoffnet = false;
+		dataeiGespeichert = false;
+	}
+
 	public void closedMatchplan() {
 		setMatchplan(false);
 	}
@@ -91,6 +101,8 @@ public class Hauptview {
 	}
 
 	private boolean openWindow() {
+		boolean a = false;
+
 		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 		jfc.setApproveButtonText("Open");
 		FileFilter filter = new FileNameExtensionFilter("XLS", "xls");
@@ -106,12 +118,14 @@ public class Hauptview {
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = jfc.getSelectedFile();
 			System.out.println(selectedFile.getAbsolutePath());
+			a = true;
 		}
-		
-		return 
+
+		return a;
 	}
 
-	private void saveWindow() {
+	private boolean saveWindow() {
+		boolean a = false;
 		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 		jfc.setDialogTitle("Choose a directory to save your file: ");
 		jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -121,8 +135,10 @@ public class Hauptview {
 			if (jfc.getSelectedFile() != null) {
 				dataeiGespeichert = true;
 				System.out.println("You selected the directory: " + jfc.getSelectedFile());
+				a = true;
 			}
 		}
+		return a;
 	}
 
 	// Mannschaften setten
@@ -175,26 +191,34 @@ public class Hauptview {
 		frame.addWindowFocusListener(new WindowFocusListener() {
 			public void windowGainedFocus(WindowEvent arg0) {
 				table.addSize(newView.getSpieltage());
-				// for (int i = 0; i < newView.getSpieltage(); i++) {
-				// spieltageData.addRow();//
-				// }
-				//
+
 				if (newView.getErstellt()) {
 					spieltageData.addTeam(newView.getTeams());
 					// spieltageData = new TabelleSpielTage(newView.getTeams());
 					spieltageData.createSpieltage();
 				}
 
-				// .println("Close: gespeichert-" + gespeichert + ",buttonchoice: " +
-				// closeView.getButtonChoice());
-				// System.out.println("beendenwas: " + closeView.getBeendenWas());
+				if (closeView.getButtonChoice() == 1 && closeNoSave && !gespeichert) {
 
-				if (closeView.getButtonChoice() == 1) {
-					gespeichert = true;
-					closedMatchplan();
-					closeView.setButtonChoice(0);
-				} else {
-
+//					closeView.setButtonChoice(0);
+					boolean a = saveWindow();
+					System.out.println("■FROM FOCUS ■");
+					if (a) {
+						gespeichert = true;
+						closedMatchplan();
+						if (beendeProgramm) {
+							System.exit(0);
+						}
+					} else {
+						closeNoSave = false;
+					}
+				}else if(closeView.getButtonChoice() == 0) {
+					if(beendeProgramm) {
+						System.exit(0);
+					}else if(closeNoSave) {
+						closedMatchplan();
+						closeNoSave=false;
+					}
 				}
 			}
 
@@ -217,7 +241,7 @@ public class Hauptview {
 			public void actionPerformed(ActionEvent e) {
 				newView.setVisible(true);
 				openedMatchplan();
-				geoffnet = true;
+				dateiGeoffnet = true;
 				// gespeichert = false;
 				if (gespeichert) {
 					spieltageData.resetSpielTage();
@@ -229,10 +253,13 @@ public class Hauptview {
 
 		mnitOffnen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				openedMatchplan();
-				geoffnet = true;
-				gespeichert = false;
-				openWindow();
+				if (openWindow()) {
+					// FIXME#1: wenn eine datei ausgewählt wurde, müssen ihre werte in die haupt
+					// tabelle geladen werden
+					openedMatchplan();
+					dateiGeoffnet = true;
+					gespeichert = false;
+				}
 			}
 		});
 		menuDatei.add(mnitOffnen);
@@ -240,10 +267,12 @@ public class Hauptview {
 		mnitSpeichern.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				if (!dataeiGespeichert) {
+				if (!gespeichert) {
+					gespeichert = true;
 					saveWindow();
-				}
-				gespeichert = true;
+				} else {
+					gespeichert = true;
+				} 
 
 			}
 		});
@@ -258,15 +287,13 @@ public class Hauptview {
 		mnitClose.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				// System.out
-				// .println("Close: gespeichert-" + gespeichert + ",buttonchoice: " +
-				// closeView.getButtonChoice());
-				// System.out.println("beendenwas: " + closeView.getBeendenWas());
 				if (gespeichert == true) {
-					geoffnet = false;
+					dateiGeoffnet = false;
 					closedMatchplan();
+					resetFlags();
 				} else {
 					closeView.setVisible(true);
+					closeNoSave = true;
 				}
 			}
 		});
@@ -286,12 +313,17 @@ public class Hauptview {
 
 		mnitBeenden.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (gespeichert == true) {
-					// frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-				} else {
+				if (!gespeichert && !dateiGeoffnet) {
+					System.exit(0);
+				} else if (gespeichert) {
+					System.exit(0);
+				} else if (!gespeichert && dateiGeoffnet) {
 					closeView.setVisible(true);
+					closeNoSave = true;
+					beendeProgramm = true;
 				}
 			}
+//			else if (!gespeichert && dateiGeoffnet && gespeichert) {
 		});
 
 		menuDatei.add(mnitSpeichernunter);
@@ -363,15 +395,15 @@ public class Hauptview {
 	}
 
 	public void setGespeichert(boolean n) {
-		geoffnet = n;
+		dateiGeoffnet = n;
 	}
 
 	public boolean getGespeichert() {
-		return geoffnet;
+		return dateiGeoffnet;
 	}
 
 	public void setGeoffnet(boolean n) {
-		geoffnet = n;
+		dateiGeoffnet = n;
 	}
 
 }
