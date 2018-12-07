@@ -41,6 +41,8 @@ public class Hauptview {
 	boolean gespeichert = false;
 	boolean geoffnet = false;
 
+	boolean dataeiGespeichert = false;
+
 	private Mannschaften[] teams;
 	TabelleSpielTage spieltageData = new TabelleSpielTage(teams);
 	public Daten b = new Daten(5);
@@ -87,10 +89,10 @@ public class Hauptview {
 		Zentralesicht.setVisible(b);
 		SpieltagAnsicht.setVisible(b);
 	}
-	
-	private void saveWindow() {
+
+	private boolean openWindow() {
 		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-		jfc.setApproveButtonText("Save");
+		jfc.setApproveButtonText("Open");
 		FileFilter filter = new FileNameExtensionFilter("XLS", "xls");
 		FileFilter filter2 = new FileNameExtensionFilter("CSV", "csv");
 		FileFilter filter3 = new FileNameExtensionFilter("XLSX", "xlsx");
@@ -99,16 +101,30 @@ public class Hauptview {
 		jfc.addChoosableFileFilter(filter3);
 
 		jfc.setFileFilter(filter2);
-		int returnValue = jfc.showSaveDialog(null);
+		int returnValue = jfc.showOpenDialog(null);
 
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
-
 			File selectedFile = jfc.getSelectedFile();
 			System.out.println(selectedFile.getAbsolutePath());
 		}
+		
+		return 
 	}
-	
-	
+
+	private void saveWindow() {
+		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+		jfc.setDialogTitle("Choose a directory to save your file: ");
+		jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+
+		int returnValue = jfc.showSaveDialog(null);
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			if (jfc.getSelectedFile() != null) {
+				dataeiGespeichert = true;
+				System.out.println("You selected the directory: " + jfc.getSelectedFile());
+			}
+		}
+	}
+
 	// Mannschaften setten
 	public void setMan(Mannschaften[] m) {
 		teams = m;
@@ -202,10 +218,10 @@ public class Hauptview {
 				newView.setVisible(true);
 				openedMatchplan();
 				geoffnet = true;
-				//gespeichert = false;
-				if(gespeichert){				
+				// gespeichert = false;
+				if (gespeichert) {
 					spieltageData.resetSpielTage();
-					
+
 				}
 			}
 		});
@@ -216,18 +232,19 @@ public class Hauptview {
 				openedMatchplan();
 				geoffnet = true;
 				gespeichert = false;
-				
+				openWindow();
 			}
 		});
 		menuDatei.add(mnitOffnen);
 
 		mnitSpeichern.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(!gespeichert) {
+
+				if (!dataeiGespeichert) {
 					saveWindow();
 				}
-				
-				//gespeichert = !gespeichert;
+				gespeichert = true;
+
 			}
 		});
 		menuDatei.add(mnitSpeichern);

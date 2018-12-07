@@ -41,7 +41,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 
 	public void showSpieltag(int n) {
 		spielTage=spielTageOutput;
-		System.out.println("N:"+n);
+//		System.out.println("N:"+n);
 		
 		List<Spiel> temp = new ArrayList<>();
 		
@@ -87,25 +87,25 @@ public class TabelleSpielTage extends AbstractTableModel {
 		spieleProTag = spieleGesamt / spielTageInt;
 
 		
-		System.out.println("■■■■■■■■■■■■\nSpielTage: " + spielTageInt + "\tSpielegesamt: " + spieleGesamt
-				+ "\tSPieleProTag: " + spieleProTag);
+//		System.out.println("■■■■■■■■■■■■\nSpielTage: " + spielTageInt + "\tSpielegesamt: " + spieleGesamt
+//				+ "\tSPieleProTag: " + spieleProTag);
 		// hinspiel
 		for (int j = 0; j < teams.length - 1; j++) {
 
 			for (int k = j + 1; k < teams.length; k++) {
-				System.out.println((j + 1) + ":" + (k + 1));		
+//				System.out.println((j + 1) + ":" + (k + 1));		
 				
 				addRow(teams[j], teams[k], new Ergebnisse(0, 0), new Date());
 			}
 
 		}
-		System.out.println("■");
+//		System.out.println("■");
 
 		// ruckspiele
 		for (int j = 0; j < teams.length - 1; j++) {
 
 			for (int k = j + 1; k < teams.length; k++) {
-				System.out.println((k + 1) + ":" + (j + 1));
+//				System.out.println((k + 1) + ":" + (j + 1));
 				addRow(teams[k], teams[j], new Ergebnisse(0, 0), new Date());
 			}
 
@@ -113,7 +113,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 
 		fireTableStructureChanged();
 		spielTage=spielTageOutput;
-		System.out.println("Length" + spielTageOutput.size());
+//		System.out.println("Length" + spielTageOutput.size());
 	}
 
 	@Override
