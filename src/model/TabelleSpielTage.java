@@ -15,7 +15,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 
 	String[] columNames = { "Team1", "Team2", "Ergebnis", "Datum" };
 	
-	int spielProTag = 0;
+	int spieleProTag = 0;
 
 	public TabelleSpielTage(Mannschaften[] teams) {
 		this.teams = teams;
@@ -32,12 +32,20 @@ public class TabelleSpielTage extends AbstractTableModel {
 		}
 		fireTableStructureChanged();
 	}
+	
+	public void resetSpielTage() {
+		for (Spiel spiel : spielTage) {
+			spiel=null;
+		}
+	}
 
 	public void showSpieltag(int n) {
 		spielTage=spielTageOutput;
 		System.out.println("N:"+n);
+		
 		List<Spiel> temp = new ArrayList<>();
-		for (int i = 0; i < spielProTag; i++) {
+		
+		for (int i = 0; i < spieleProTag; i++) {
 			temp.add(spielTageOutput.get(n+i));
 		}
 		spielTageOutput = temp;
@@ -76,10 +84,11 @@ public class TabelleSpielTage extends AbstractTableModel {
 		spielTageInt = (spielTageInt * (spielTageInt - 1)) / (spielTageInt / 2);
 
 		int spieleGesamt = (teams.length / 2) * spielTageInt;
-		spielProTag = spieleGesamt / spielTageInt;
+		spieleProTag = spieleGesamt / spielTageInt;
 
+		
 		System.out.println("■■■■■■■■■■■■\nSpielTage: " + spielTageInt + "\tSpielegesamt: " + spieleGesamt
-				+ "\tSPieleProTag: " + spielProTag);
+				+ "\tSPieleProTag: " + spieleProTag);
 		// hinspiel
 		for (int j = 0; j < teams.length - 1; j++) {
 
@@ -97,7 +106,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 
 			for (int k = j + 1; k < teams.length; k++) {
 				System.out.println((k + 1) + ":" + (j + 1));
-				addRow(teams[j], teams[k], new Ergebnisse(0, 0), new Date());
+				addRow(teams[k], teams[j], new Ergebnisse(0, 0), new Date());
 			}
 
 		}
