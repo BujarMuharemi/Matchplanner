@@ -3,6 +3,7 @@ package model;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -56,13 +57,13 @@ public class TabelleSpielTage extends AbstractTableModel {
 	public boolean getEditDates() {
 		return editDates;
 	}
-	
+
 	public void setEditTeam(boolean b) {
-		editTeams=b;
+		editTeams = b;
 	}
-	
+
 	public void setEditDates(boolean b) {
-		editDates=b;
+		editDates = b;
 	}
 
 	public void resetSpielTage() {
@@ -118,26 +119,48 @@ public class TabelleSpielTage extends AbstractTableModel {
 		int spieleGesamt = (teams.length / 2) * spielTageInt;
 		spieleProTag = spieleGesamt / spielTageInt;
 
-//		System.out.println("■■■■■■■■■■■■\nSpielTage: " + spielTageInt + "\tSpielegesamt: " + spieleGesamt
-//				+ "\tSPieleProTag: " + spieleProTag);
-		// hinspiel
+		// Für das Zählen der Tage
+		Date date = new Date();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+
+		int counter = 0;
+
+		// Hinspiele
 		for (int j = 0; j < teams.length - 1; j++) {
 
 			for (int k = j + 1; k < teams.length; k++) {
-//				System.out.println((j + 1) + ":" + (k + 1));		
-
-				addRow(teams[j], teams[k], new Ergebnisse(0, 0), new Date());
+//				System.out.println((j + 1) + ":" + (k + 1));
+				
+				
+				if (counter >= spieleProTag) {
+					cal.add(Calendar.DATE, 1);
+					date = cal.getTime();
+					counter=0;
+				}
+				counter++;
+				
+				
+				addRow(teams[j], teams[k], new Ergebnisse(0, 0), date);
 			}
-			// FIXME-Bug#4: Tage aufwärts zählen, mit uhrzeit ?
 		}
-//		System.out.println("■");
-
+		
+		
 		// ruckspiele
 		for (int j = 0; j < teams.length - 1; j++) {
 
 			for (int k = j + 1; k < teams.length; k++) {
 //				System.out.println((k + 1) + ":" + (j + 1));
-				addRow(teams[k], teams[j], new Ergebnisse(0, 0), new Date());
+				
+				if (counter >= spieleProTag) {
+					cal.add(Calendar.DATE, 1);
+					date = cal.getTime();
+					counter=0;
+				}
+				counter++;
+				
+				
+				addRow(teams[k], teams[j], new Ergebnisse(0, 0), date);
 			}
 
 		}
@@ -178,15 +201,15 @@ public class TabelleSpielTage extends AbstractTableModel {
 			if (columnIndex == 0) {
 				spielTageOutput.get(rowIndex).setM1(new Mannschaften(aValue.toString()));
 				editTeams = true;
-				
+
 			} else if (columnIndex == 1) {
 				spielTageOutput.get(rowIndex).setM2(new Mannschaften(aValue.toString()));
 				editTeams = true;
-				
+
 			} else if (columnIndex == 2) {
 				Ergebnisse ergbe = new Ergebnisse(0, 0); // TODO#3: string auf splitten und ergebniss in ints
 				spielTageOutput.get(rowIndex).setErg(ergbe);
-				
+
 			} else if (columnIndex == 3) {
 				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 				String dateInString = aValue.toString();
@@ -200,10 +223,10 @@ public class TabelleSpielTage extends AbstractTableModel {
 //					e.printStackTrace();
 					JOptionPane.showMessageDialog(null, "Richtiges Datumsformat nutzen !");
 				}
-				
+
 			} else {
-				editTeams=false;
-				editDates=false;
+				editTeams = false;
+				editDates = false;
 			}
 
 			// System.out.println(rowIndex + ":" + teams[rowIndex].getName());

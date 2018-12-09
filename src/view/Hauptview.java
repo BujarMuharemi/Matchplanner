@@ -232,12 +232,11 @@ public class Hauptview {
 					gespeichert=true;
 					closedMatchplan();
 				}
-				System.out.println("saved:"+gespeichert+"\tcloseNoSave "+closeNoSave+"\tpath "+dateiPathChoosen);
+//				System.out.println("saved:"+gespeichert+"\tcloseNoSave "+closeNoSave+"\tpath "+dateiPathChoosen);
 			}
 
 			public void windowLostFocus(WindowEvent arg0) {
 				table.addSize(newView.getSpieltage());
-				System.out.println("saved:"+gespeichert+"\tcloseNoSave "+closeNoSave+"\tpath "+dateiPathChoosen);
 			}
 		});
 		frame.setResizable(false);
