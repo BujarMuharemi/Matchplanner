@@ -1,5 +1,7 @@
 package model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -163,9 +165,16 @@ public class TabelleSpielTage extends AbstractTableModel {
 			} else if (columnIndex == 2) {
 				Ergebnisse ergbe = new Ergebnisse(0, 0); // TODO#3: string auf splitten und ergebniss in ints
 				spielTageOutput.get(rowIndex).setErg(ergbe);
-			} else if (columnIndex == 1) {
-				Date d = new Date();
-				spielTageOutput.get(rowIndex).setDate(d);
+			} else if (columnIndex == 3) {
+				SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm");
+				String dateInString = "22-01-2015 10:20";
+				Date d=null;
+				try {
+					d = sdf.parse(dateInString);
+				} catch (ParseException e) {					
+					e.printStackTrace();
+				}
+				spielTageOutput.get(rowIndex).setDate(d); //FIXME-Bug#4: Tage aufwärts zählen, mit uhrzeit ?
 			}
 
 			// System.out.println(rowIndex + ":" + teams[rowIndex].getName());
@@ -179,9 +188,10 @@ public class TabelleSpielTage extends AbstractTableModel {
 
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		boolean a = false;
-		if (editDates && columnIndex == 4) {
-			a = true; //FIXME#2: dates können nicht bearbeitet werden
-		} else if (editTeams && (columnIndex == 0 || columnIndex == 1)) {
+		System.out.println(editTeams);
+		if (editDates && columnIndex == 3) {
+			a = true;
+		} else if (editTeams && (columnIndex == 0 || columnIndex == 1 )) {
 			a = true;
 		}
 		return a;

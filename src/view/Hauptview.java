@@ -27,11 +27,10 @@ import java.io.File;
 */
 
 /*
- * FIXME-Bug#4: Tage aufwärts zählen, mit uhrzeit ?
  * TODO-Teil2: Änderung an Teams/Dates möglich machen, gespeichert flag zurücksetzen
  * 
  * TODO-Feature#1: Anzahl der Spieltage auf JLabel in ZentralAnsicht zeigen
- * TODO-Feature#2: Über die Menüeinträge edit/bearbeiten, es ermöglichen die Spieltag tabelle zu bearbeiten(und speichern flag=false)
+
  * */
 
 public class Hauptview {
@@ -307,7 +306,7 @@ public class Hauptview {
 
 		mnitSpieltag.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				spieltageData.editTeams();
+				spieltageData.editDates();
 			}
 		});
 
