@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
 public class TabelleSpielTage extends AbstractTableModel {
@@ -46,6 +47,22 @@ public class TabelleSpielTage extends AbstractTableModel {
 	public void editDates() {
 		editDates = true;
 		editTeams = false;
+	}
+
+	public boolean getEditTeam() {
+		return editTeams;
+	}
+
+	public boolean getEditDates() {
+		return editDates;
+	}
+	
+	public void setEditTeam(boolean b) {
+		editTeams=b;
+	}
+	
+	public void setEditDates(boolean b) {
+		editDates=b;
 	}
 
 	public void resetSpielTage() {
@@ -111,7 +128,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 
 				addRow(teams[j], teams[k], new Ergebnisse(0, 0), new Date());
 			}
-
+			// FIXME-Bug#4: Tage aufwärts zählen, mit uhrzeit ?
 		}
 //		System.out.println("■");
 
@@ -149,7 +166,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 		} else if (ColumIndex == 1) {
 			n = spielTageOutput.get(rowIndex).getM2().getName();
 		} else if (ColumIndex == 3) {
-			n = spielTageOutput.get(rowIndex).getDate().toString();
+			n = spielTageOutput.get(rowIndex).toStringDate();
 		} else {
 			n = spielTageOutput.get(rowIndex).getErg().toString();
 		}
@@ -160,21 +177,33 @@ public class TabelleSpielTage extends AbstractTableModel {
 		if (spielTageOutput != null) {
 			if (columnIndex == 0) {
 				spielTageOutput.get(rowIndex).setM1(new Mannschaften(aValue.toString()));
+				editTeams = true;
+				
 			} else if (columnIndex == 1) {
 				spielTageOutput.get(rowIndex).setM2(new Mannschaften(aValue.toString()));
+				editTeams = true;
+				
 			} else if (columnIndex == 2) {
 				Ergebnisse ergbe = new Ergebnisse(0, 0); // TODO#3: string auf splitten und ergebniss in ints
 				spielTageOutput.get(rowIndex).setErg(ergbe);
+				
 			} else if (columnIndex == 3) {
-				SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm");
-				String dateInString = "22-01-2015 10:20";
-				Date d=null;
+				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+				String dateInString = aValue.toString();
+				Date d = null;
+
 				try {
 					d = sdf.parse(dateInString);
-				} catch (ParseException e) {					
-					e.printStackTrace();
+					spielTageOutput.get(rowIndex).setDate(d);
+					editDates = true;
+				} catch (ParseException e) {
+//					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Richtiges Datumsformat nutzen !");
 				}
-				spielTageOutput.get(rowIndex).setDate(d); //FIXME-Bug#4: Tage aufwärts zählen, mit uhrzeit ?
+				
+			} else {
+				editTeams=false;
+				editDates=false;
 			}
 
 			// System.out.println(rowIndex + ":" + teams[rowIndex].getName());
@@ -188,10 +217,9 @@ public class TabelleSpielTage extends AbstractTableModel {
 
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		boolean a = false;
-		System.out.println(editTeams);
 		if (editDates && columnIndex == 3) {
 			a = true;
-		} else if (editTeams && (columnIndex == 0 || columnIndex == 1 )) {
+		} else if (editTeams && (columnIndex == 0 || columnIndex == 1)) {
 			a = true;
 		}
 		return a;
