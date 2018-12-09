@@ -1,4 +1,6 @@
 package model;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Spiel {
@@ -13,7 +15,7 @@ public class Spiel {
 		this.erg = er;
 		this.date = date;
 	}
-	
+
 	public Mannschaften getM1() {
 		return m1;
 	}
@@ -44,6 +46,14 @@ public class Spiel {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public String toStringDate() {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+		String datum = formatter.format(this.date);
+
+		return datum;
+
 	}
 
 }

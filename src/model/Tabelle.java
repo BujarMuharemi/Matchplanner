@@ -15,7 +15,7 @@ public class Tabelle extends AbstractTableModel {
 
 	public void addSize(int n) {
 		this.size = n;	
-		System.out.println("addSize: "+this.size);
+//		System.out.println("addSize: "+this.size);
 		fireTableStructureChanged();
 		
 	}

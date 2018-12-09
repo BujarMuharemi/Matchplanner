@@ -9,6 +9,8 @@ import javax.swing.filechooser.FileSystemView;
 
 import model.*;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -27,11 +29,7 @@ import java.io.File;
 */
 
 /*
- * FIXME-Bug#4: Tage aufwärts zählen, mit uhrzeit ?
- * TODO-Teil2: Änderung an Teams/Dates möglich machen, gespeichert flag zurücksetzen
- * 
  * TODO-Feature#1: Anzahl der Spieltage auf JLabel in ZentralAnsicht zeigen
- * TODO-Feature#2: Über die Menüeinträge edit/bearbeiten, es ermöglichen die Spieltag tabelle zu bearbeiten(und speichern flag=false)
  * */
 
 public class Hauptview {
@@ -42,10 +40,12 @@ public class Hauptview {
 	boolean gespeichert = false;
 	boolean dateiGeoffnet = false;
 
-	boolean dataeiGespeichert = false;
+	boolean dateiPathChoosen = false;
 
 	boolean closeNoSave = false;
 	boolean beendeProgramm = false;
+
+	boolean teamsErstellt = false;
 
 	private Mannschaften[] teams;
 	TabelleSpielTage spieltageData = new TabelleSpielTage(teams);
@@ -74,7 +74,10 @@ public class Hauptview {
 	private void resetFlags() {
 		gespeichert = false;
 		dateiGeoffnet = false;
-		dataeiGespeichert = false;
+		dateiPathChoosen = false;
+		closeNoSave = false;
+		beendeProgramm = false;
+		teamsErstellt = false;
 	}
 
 	public void closedMatchplan() {
@@ -126,18 +129,21 @@ public class Hauptview {
 
 	private boolean saveWindow() {
 		boolean a = false;
-		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-		jfc.setDialogTitle("Choose a directory to save your file: ");
-		jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		if(!dateiPathChoosen) {
+			JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+			jfc.setDialogTitle("Choose a directory to save your file: ");
+			jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
-		int returnValue = jfc.showSaveDialog(null);
-		if (returnValue == JFileChooser.APPROVE_OPTION) {
-			if (jfc.getSelectedFile() != null) {
-				dataeiGespeichert = true;
-				System.out.println("You selected the directory: " + jfc.getSelectedFile());
-				a = true;
+			int returnValue = jfc.showSaveDialog(null);
+			if (returnValue == JFileChooser.APPROVE_OPTION) {
+				if (jfc.getSelectedFile() != null) {
+					dateiPathChoosen = true;
+					System.out.println("You selected the directory: " + jfc.getSelectedFile());
+					a = true;
+				}
 			}
 		}
+		
 		return a;
 	}
 
@@ -192,18 +198,20 @@ public class Hauptview {
 			public void windowGainedFocus(WindowEvent arg0) {
 				table.addSize(newView.getSpieltage());
 
-				if (newView.getErstellt()) {
+				if (newView.getErstellt() && !teamsErstellt) {
 					spieltageData.addTeam(newView.getTeams());
 					// spieltageData = new TabelleSpielTage(newView.getTeams());
 					spieltageData.createSpieltage();
+					teamsErstellt = true;
 				}
 
 				if (closeView.getButtonChoice() == 1 && closeNoSave && !gespeichert) {
 
 //					closeView.setButtonChoice(0);
+					
 					boolean a = saveWindow();
-					System.out.println("■FROM FOCUS ■");
-					if (a) {
+
+					if (a) {						
 						gespeichert = true;
 						closedMatchplan();
 						if (beendeProgramm) {
@@ -212,14 +220,19 @@ public class Hauptview {
 					} else {
 						closeNoSave = false;
 					}
-				}else if(closeView.getButtonChoice() == 0) {
-					if(beendeProgramm) {
+				} else if (closeView.getButtonChoice() == 0) {
+					if (beendeProgramm) {
 						System.exit(0);
-					}else if(closeNoSave) {
+					} else if (closeNoSave) {
 						closedMatchplan();
-						closeNoSave=false;
+						closeNoSave = false;
 					}
 				}
+				if(closeView.getButtonChoice() == 1 && !gespeichert && dateiPathChoosen){
+					gespeichert=true;
+					closedMatchplan();
+				}
+//				System.out.println("saved:"+gespeichert+"\tcloseNoSave "+closeNoSave+"\tpath "+dateiPathChoosen);
 			}
 
 			public void windowLostFocus(WindowEvent arg0) {
@@ -244,9 +257,9 @@ public class Hauptview {
 				dateiGeoffnet = true;
 				// gespeichert = false;
 				if (gespeichert) {
-					spieltageData.resetSpielTage();
-
+//					spieltageData.resetSpielTage();					
 				}
+				resetFlags();
 			}
 		});
 		menuDatei.add(mnitNeu);
@@ -267,12 +280,12 @@ public class Hauptview {
 		mnitSpeichern.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				if (!gespeichert) {
+				if (!gespeichert && !dateiPathChoosen) {
 					gespeichert = true;
 					saveWindow();
 				} else {
 					gespeichert = true;
-				} 
+				}
 
 			}
 		});
@@ -286,28 +299,28 @@ public class Hauptview {
 
 		mnitClose.addActionListener(new ActionListener() {
 
-			public void actionPerformed(ActionEvent e) {
-				if (gespeichert == true) {
+			public void actionPerformed(ActionEvent e) {				
+				if (gespeichert == true && dateiPathChoosen) {
 					dateiGeoffnet = false;
 					closedMatchplan();
 					resetFlags();
-				} else {
+				} else {					
 					closeView.setVisible(true);
-					closeNoSave = true;
+					closeNoSave = true;				
 				}
 			}
 		});
 
 		mnitMannschaftba.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, " Manschaften verändern ");
+				spieltageData.editTeams();
 			}
 		});
 		mnextra.add(mnitMannschaftba);
 
 		mnitSpieltag.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, " Spieltage festlegen / verändern ");
+				spieltageData.editDates();
 			}
 		});
 
@@ -375,7 +388,7 @@ public class Hauptview {
 
 		Zentralesicht.add(ZentralScrollen);
 
-		System.out.println("DatenGet" + b.getN());
+//		System.out.println("DatenGet" + b.getN());
 		frame.repaint();
 
 		tabelle.addMouseListener(new MouseAdapter() {
@@ -389,6 +402,24 @@ public class Hauptview {
 						// System.out.println(teams[i].getName());
 					}
 				}
+			}
+		});
+		
+		//Überprügt ob der Nutzer etwas eingegeben hatt
+		spielTageTabelle.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent arg0) {				
+				gespeichert = false;
+			}
+
+			@Override
+			public void keyReleased(KeyEvent arg0) {				
+				gespeichert = false;
+			}
+
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				gespeichert = false;
 			}
 		});
 

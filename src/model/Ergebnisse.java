@@ -31,5 +31,10 @@ public class Ergebnisse {
 		return this.erg1+":"+this.erg2;
 		
 	}
+	//TODO#3.1: diese methode fixen/oder einen string constructer erstellen
+	public void setErg(String e) {
+		erg1=Integer.parseInt(e);
+		erg2=Integer.parseInt(e);
+	}
 
 }
