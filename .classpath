@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/81mubu1bif/Downloads/poi-src-4.0.1-20181203.zip"/>
-	<classpathentry kind="lib" path="C:/Users/81mubu1bif/Downloads/slf4j-1.7.25.zip"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/MyLib"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -77,22 +77,15 @@ public class TabelleSpielTage extends AbstractTableModel {
 
 	public void showSpieltag(int n) {
 		spielTage = spielTageOutput;
-		System.out.println("asdf");
 		List<Spiel> temp = new ArrayList<>();
 
-		count = n * 2;
-		count--;
-		System.out.println("count:" + count);
-
-		// FIXME#2: Richtige Spieltage anzeigen N x2 usw...
+		count = n * spieleProTag;
 
 		for (int i = 0; i < spieleProTag; i++) {
-			temp.add(spielTageOutput.get(n + i));
+			temp.add(spielTageOutput.get(count + i));
 		}
-		System.out.println("--------");
 		spielTageOutput = temp;
 		fireTableStructureChanged();
-		// spielTageOutput=spielTage;
 	}
 
 	public void addRow(Mannschaften m1, Mannschaften m2, Ergebnisse e1, Date d) {
