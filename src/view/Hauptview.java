@@ -129,7 +129,7 @@ public class Hauptview {
 
 	private boolean saveWindow() {
 		boolean a = false;
-		if(!dateiPathChoosen) {
+		if (!dateiPathChoosen) {
 			JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 			jfc.setDialogTitle("Choose a directory to save your file: ");
 			jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -143,7 +143,7 @@ public class Hauptview {
 				}
 			}
 		}
-		
+
 		return a;
 	}
 
@@ -200,18 +200,16 @@ public class Hauptview {
 
 				if (newView.getErstellt() && !teamsErstellt) {
 					spieltageData.addTeam(newView.getTeams());
-					// spieltageData = new TabelleSpielTage(newView.getTeams());
 					spieltageData.createSpieltage();
 					teamsErstellt = true;
+					//FIXME#2: Bearbeiten von Teams resetet die tabelle
 				}
 
 				if (closeView.getButtonChoice() == 1 && closeNoSave && !gespeichert) {
 
-//					closeView.setButtonChoice(0);
-					
 					boolean a = saveWindow();
 
-					if (a) {						
+					if (a) {
 						gespeichert = true;
 						closedMatchplan();
 						if (beendeProgramm) {
@@ -228,8 +226,8 @@ public class Hauptview {
 						closeNoSave = false;
 					}
 				}
-				if(closeView.getButtonChoice() == 1 && !gespeichert && dateiPathChoosen){
-					gespeichert=true;
+				if (closeView.getButtonChoice() == 1 && !gespeichert && dateiPathChoosen) {
+					gespeichert = true;
 					closedMatchplan();
 				}
 //				System.out.println("saved:"+gespeichert+"\tcloseNoSave "+closeNoSave+"\tpath "+dateiPathChoosen);
@@ -299,21 +297,25 @@ public class Hauptview {
 
 		mnitClose.addActionListener(new ActionListener() {
 
-			public void actionPerformed(ActionEvent e) {				
+			public void actionPerformed(ActionEvent e) {
 				if (gespeichert == true && dateiPathChoosen) {
 					dateiGeoffnet = false;
 					closedMatchplan();
 					resetFlags();
-				} else {					
+				} else {
 					closeView.setVisible(true);
-					closeNoSave = true;				
+					closeNoSave = true;
 				}
 			}
 		});
 
 		mnitMannschaftba.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				spieltageData.editTeams();
+				// spieltageData.editTeams();
+				newView.setVisible(true);
+				spieltageData.setEditTeam(true);
+				teamsErstellt = false;
+				gespeichert=false;
 			}
 		});
 		mnextra.add(mnitMannschaftba);
@@ -321,6 +323,7 @@ public class Hauptview {
 		mnitSpieltag.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				spieltageData.editDates();
+				gespeichert=false;
 			}
 		});
 
@@ -404,16 +407,16 @@ public class Hauptview {
 				}
 			}
 		});
-		
-		//Überprügt ob der Nutzer etwas eingegeben hatt
+
+		// Überprügt ob der Nutzer etwas eingegeben hatt
 		spielTageTabelle.addKeyListener(new KeyListener() {
 			@Override
-			public void keyTyped(KeyEvent arg0) {				
+			public void keyTyped(KeyEvent arg0) {
 				gespeichert = false;
 			}
 
 			@Override
-			public void keyReleased(KeyEvent arg0) {				
+			public void keyReleased(KeyEvent arg0) {
 				gespeichert = false;
 			}
 
