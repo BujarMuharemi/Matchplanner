@@ -24,18 +24,21 @@ public class TabelleSpielTage extends AbstractTableModel {
 	private boolean editTeams = false;
 	private boolean editDates = false;
 
+	int count = 0;
+
 	public TabelleSpielTage(Mannschaften[] teams) {
 		this.teams = teams;
 
-//		System.out.println("TabelleSpielTage");
+		// System.out.println("TabelleSpielTage");
 
 		if (teams != null) {
-//			for (int i = 0; i < this.teams.length; i++) {
-//				System.out.println("Aus SpielTagTabelle\t" + i + ":" + this.teams[i].getName());
-//
-//				addRow();
-//			}
-//			System.out.println("Length recived: " + this.teams.length);
+			// for (int i = 0; i < this.teams.length; i++) {
+			// System.out.println("Aus SpielTagTabelle\t" + i + ":" +
+			// this.teams[i].getName());
+			//
+			// addRow();
+			// }
+			// System.out.println("Length recived: " + this.teams.length);
 		}
 		fireTableStructureChanged();
 	}
@@ -74,30 +77,22 @@ public class TabelleSpielTage extends AbstractTableModel {
 
 	public void showSpieltag(int n) {
 		spielTage = spielTageOutput;
-
+		System.out.println("asdf");
 		List<Spiel> temp = new ArrayList<>();
-		
-		if(n>0) {
-			n++;
-		}
-		boolean setN=false;
-		//FIXME#2: Richtige Spieltage anzeigen N x2 usw...
-		System.out.println("N:"+n);
-		for (int i = 0; i < spieleProTag; i++) {			
-			
-			if(n%2 != 0 && !setN) {
-				n++;
-				setN=true;
-			}
-			int a = i+n;
-			
-			System.out.println(a);
-			temp.add(spielTageOutput.get(a));
+
+		count = n * 2;
+		count--;
+		System.out.println("count:" + count);
+
+		// FIXME#2: Richtige Spieltage anzeigen N x2 usw...
+
+		for (int i = 0; i < spieleProTag; i++) {
+			temp.add(spielTageOutput.get(n + i));
 		}
 		System.out.println("--------");
 		spielTageOutput = temp;
 		fireTableStructureChanged();
-//		spielTageOutput=spielTage;
+		// spielTageOutput=spielTage;
 	}
 
 	public void addRow(Mannschaften m1, Mannschaften m2, Ergebnisse e1, Date d) {
@@ -110,7 +105,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 
 		this.teams = teams;
 		for (int i = 0; i < teams.length; i++) {
-//			addRow();
+			// addRow();
 		}
 		fireTableStructureChanged();
 	}
@@ -137,36 +132,32 @@ public class TabelleSpielTage extends AbstractTableModel {
 		for (int j = 0; j < teams.length - 1; j++) {
 
 			for (int k = j + 1; k < teams.length; k++) {
-//				System.out.println((j + 1) + ":" + (k + 1));
-				
-				
+				// System.out.println((j + 1) + ":" + (k + 1));
+
 				if (counter >= spieleProTag) {
 					cal.add(Calendar.DATE, 1);
 					date = cal.getTime();
-					counter=0;
+					counter = 0;
 				}
 				counter++;
-				
-				
+
 				addRow(teams[j], teams[k], new Ergebnisse(0, 0), date);
 			}
 		}
-		
-		
+
 		// ruckspiele
 		for (int j = 0; j < teams.length - 1; j++) {
 
 			for (int k = j + 1; k < teams.length; k++) {
-//				System.out.println((k + 1) + ":" + (j + 1));
-				
+				// System.out.println((k + 1) + ":" + (j + 1));
+
 				if (counter >= spieleProTag) {
 					cal.add(Calendar.DATE, 1);
 					date = cal.getTime();
-					counter=0;
+					counter = 0;
 				}
 				counter++;
-				
-				
+
 				addRow(teams[k], teams[j], new Ergebnisse(0, 0), date);
 			}
 
@@ -174,7 +165,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 
 		fireTableStructureChanged();
 		spielTage = spielTageOutput;
-//		System.out.println("Length" + spielTageOutput.size());
+		// System.out.println("Length" + spielTageOutput.size());
 	}
 
 	@Override
@@ -189,7 +180,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int ColumIndex) {
-//		return teams[rowIndex].getName();
+		// return teams[rowIndex].getName();
 		String n = "";
 		if (ColumIndex == 0) {
 			n = spielTageOutput.get(rowIndex).getM1().getName();
@@ -227,7 +218,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 					spielTageOutput.get(rowIndex).setDate(d);
 					editDates = true;
 				} catch (ParseException e) {
-//					e.printStackTrace();
+					// e.printStackTrace();
 					JOptionPane.showMessageDialog(null, "Richtiges Datumsformat nutzen !");
 				}
 
