@@ -7,6 +7,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
+import FileIO.OpenCSV;
 import model.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -19,17 +20,15 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.WindowFocusListener;
+import java.io.BufferedReader;
 import java.io.File;
-
-/* Idealwerte
-	6 Teams
-	10 Spieltage
-	3 Spiele pro Tag
-	30 Spiele insgesammt
-*/
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 /*
  * TODO-Feature#1: Anzahl der Spieltage auf JLabel in ZentralAnsicht zeigen
+ * FIXME#3-Anzahl der Spieltage updates ich nicht wenn man csv lädt
  * */
 
 public class Hauptview {
@@ -46,6 +45,8 @@ public class Hauptview {
 	boolean beendeProgramm = false;
 
 	boolean teamsErstellt = false;
+
+	public String openedFilePath = "";
 
 	private Mannschaften[] teams;
 	TabelleSpielTage spieltageData = new TabelleSpielTage(teams);
@@ -120,7 +121,12 @@ public class Hauptview {
 
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = jfc.getSelectedFile();
-			System.out.println(selectedFile.getAbsolutePath());
+			OpenCSV csvFile = new OpenCSV(selectedFile);
+			teams = csvFile.returnTeams();
+						
+			spieltageData.addTeam(teams);
+			spieltageData.createSpieltage();
+			
 			a = true;
 		}
 
@@ -202,7 +208,7 @@ public class Hauptview {
 					spieltageData.addTeam(newView.getTeams());
 					spieltageData.createSpieltage();
 					teamsErstellt = true;
-					//FIXME#2: Bearbeiten von Teams resetet die tabelle
+					// FIXME#2: Bearbeiten von Teams resetet die tabelle
 				}
 
 				if (closeView.getButtonChoice() == 1 && closeNoSave && !gespeichert) {
@@ -315,7 +321,7 @@ public class Hauptview {
 				newView.setVisible(true);
 				spieltageData.setEditTeam(true);
 				teamsErstellt = false;
-				gespeichert=false;
+				gespeichert = false;
 			}
 		});
 		mnextra.add(mnitMannschaftba);
@@ -323,7 +329,7 @@ public class Hauptview {
 		mnitSpieltag.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				spieltageData.editDates();
-				gespeichert=false;
+				gespeichert = false;
 			}
 		});
 

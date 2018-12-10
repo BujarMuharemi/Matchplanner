@@ -36,6 +36,10 @@ public class NewView extends JDialog {
 		return erstellt;
 	}
 	
+	public void setErstellt(boolean b) {
+		erstellt=b;
+	}
+	
 	public Mannschaften[] getTeams() {
 		return tabelle.getTeams();
 	}

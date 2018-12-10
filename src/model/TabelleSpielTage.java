@@ -108,9 +108,9 @@ public class TabelleSpielTage extends AbstractTableModel {
 	}
 
 	public void createSpieltage() {
-		int spielTageInt = teams.length;
+		int spielTageInt = teams.length;	
 		spielTageInt = (spielTageInt * (spielTageInt - 1)) / (spielTageInt / 2);
-
+		
 		int spieleGesamt = (teams.length / 2) * spielTageInt;
 		spieleProTag = spieleGesamt / spielTageInt;
 
