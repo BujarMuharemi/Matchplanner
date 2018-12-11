@@ -8,6 +8,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
 import FileIO.OpenCSV;
+import FileIO.SaveXLS;
 import model.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -145,7 +146,12 @@ public class Hauptview {
 				if (jfc.getSelectedFile() != null) {
 					dateiPathChoosen = true;
 					System.out.println("You selected the directory: " + jfc.getSelectedFile());
+					
+					SaveXLS savexls = new SaveXLS(jfc.getSelectedFile().toString(), spieltageData);
+					
+					
 					a = true;
+					
 				}
 			}
 		}
