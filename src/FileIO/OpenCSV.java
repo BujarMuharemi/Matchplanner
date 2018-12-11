@@ -11,7 +11,6 @@ import java.util.List;
 import model.Mannschaften;
 import model.TabelleSpielTage;
 
-
 public class OpenCSV {
 	
 	String path;
