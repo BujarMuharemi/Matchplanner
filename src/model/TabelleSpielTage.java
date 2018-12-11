@@ -21,7 +21,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 
 	private Mannschaften[] teams;
 
-	String[] columNames = { "Team1", "Team2", "Ergebnis", "Datum" };
+	public String[] columNames = { "Team1", "Team2", "Ergebnis", "Datum" };
 
 	int spieleProTag = 0;
 
