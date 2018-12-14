@@ -87,7 +87,6 @@ public class SaveXLS {
 				// Closing the workbook
 				wb.close();
 
-				wb.write(fileOut);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
