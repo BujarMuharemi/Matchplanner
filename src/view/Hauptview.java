@@ -9,6 +9,7 @@ import javax.swing.filechooser.FileSystemView;
 
 import FileIO.OpenCSV;
 import FileIO.OpenXLS;
+import FileIO.OpenXLSX;
 import FileIO.SaveXLS;
 import model.*;
 import java.awt.event.ActionListener;
@@ -119,30 +120,31 @@ public class Hauptview {
 		jfc.addChoosableFileFilter(filter3);
 
 		jfc.setFileFilter(filter2);
-		int returnValue = jfc.showOpenDialog(null);
+		int returnValue = (!dateiPathChoosen) ? jfc.showOpenDialog(null) : 0;
 
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			System.out.println("You selected the directory: " + jfc.getSelectedFile());
 			File selectedFile = jfc.getSelectedFile();
-			
+
 			String path = jfc.getSelectedFile().getName();
-			
-			
+
 			if (path.substring(path.lastIndexOf("."), path.length()).equals(".xls")) {
 				OpenXLS openXLS = new OpenXLS(jfc.getSelectedFile().toString());
 				spieltageData.setSpielplan(openXLS.getSpieltabelle());
-				
+
 			} else if (path.substring(path.lastIndexOf("."), path.length()).equals(".xlsx")) {
-				//OpenXLSX openXLSX = new OpenXLSX(jfc.getSelectedFile().toString(), spieltageData);
+				OpenXLSX openXLSX = new OpenXLSX(jfc.getSelectedFile().toString());
+				spieltageData.setSpielplan(openXLSX.getSpieltabelle());
+
 			} else if (path.substring(path.lastIndexOf("."), path.length()).equals(".csv")) {
 				OpenCSV csvFile = new OpenCSV(selectedFile);
 				teams = csvFile.returnTeams();
 				spieltageData.addTeam(teams);
 				spieltageData.createSpieltage();
 			}
-			
-//			dateiPathChoosen = true;
-			
+
+			dateiPathChoosen = true;
+			openedMatchplan();
 
 			a = true;
 		}
@@ -177,7 +179,7 @@ public class Hauptview {
 					if (path.substring(path.lastIndexOf("."), path.length()).equals(".xls")) {
 						System.out.println("ist drin");
 						SaveXLS savexls = new SaveXLS(jfc.getSelectedFile().toString(), spieltageData);
-					} else if (path.substring(path.lastIndexOf("."), path.length()) == "xlsx") {
+					} else if (path.substring(path.lastIndexOf("."), path.length()).equals(".xlsx")) {
 						SaveXLSX savexls = new SaveXLSX(jfc.getSelectedFile().toString(), spieltageData);
 					} else {
 						// TODO: pdf hier einbinden!
