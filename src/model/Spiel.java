@@ -52,7 +52,6 @@ public class Spiel {
 
 	public String toStringDate() {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-		System.out.println(this.date);
 		String datum = formatter.format(this.date);
 
 		return datum;

@@ -131,16 +131,17 @@ public class Hauptview {
 			if (path.substring(path.lastIndexOf("."), path.length()).equals(".xls")) {
 				OpenXLS openXLS = new OpenXLS(jfc.getSelectedFile().toString());
 				spieltageData.setSpielplan(openXLS.getSpieltabelle());
-			} else if (path.substring(path.lastIndexOf("."), path.length()) == ".xlsx") {
+				
+			} else if (path.substring(path.lastIndexOf("."), path.length()).equals(".xlsx")) {
 				//OpenXLSX openXLSX = new OpenXLSX(jfc.getSelectedFile().toString(), spieltageData);
-			} else if (path.substring(path.lastIndexOf("."), path.length()) == ".csv") {
+			} else if (path.substring(path.lastIndexOf("."), path.length()).equals(".csv")) {
 				OpenCSV csvFile = new OpenCSV(selectedFile);
 				teams = csvFile.returnTeams();
 				spieltageData.addTeam(teams);
 				spieltageData.createSpieltage();
 			}
 			
-			dateiPathChoosen = true;
+//			dateiPathChoosen = true;
 			
 
 			a = true;
@@ -173,7 +174,7 @@ public class Hauptview {
 					dateiPathChoosen = true;
 					System.out.println("You selected the directory: " + jfc.getSelectedFile());
 					String path = jfc.getSelectedFile().getName();
-					if (path.substring(path.lastIndexOf("."), path.length()) == "xls") {
+					if (path.substring(path.lastIndexOf("."), path.length()).equals(".xls")) {
 						System.out.println("ist drin");
 						SaveXLS savexls = new SaveXLS(jfc.getSelectedFile().toString(), spieltageData);
 					} else if (path.substring(path.lastIndexOf("."), path.length()) == "xlsx") {

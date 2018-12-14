@@ -49,6 +49,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 	
 	public void setSpielplan(List<Spiel> liste) {
 		this.spielTage=liste;
+		updateSpieltage();
 		fireTableStructureChanged();
 	}
 
@@ -85,7 +86,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 	}
 
 	public void showSpieltag(int n) {
-		spielTage = spielTageOutput;
+//		spielTage = spielTageOutput; einfach hier lassen,lp warum
 		List<Spiel> temp = new ArrayList<>();
 
 		count = n * spieleProTag;
