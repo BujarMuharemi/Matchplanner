@@ -46,6 +46,11 @@ public class TabelleSpielTage extends AbstractTableModel {
 		}
 		fireTableStructureChanged();
 	}
+	
+	public void setSpielplan(List<Spiel> liste) {
+		this.spielTage=liste;
+		fireTableStructureChanged();
+	}
 
 	public void editTeams() {
 		editTeams = true;

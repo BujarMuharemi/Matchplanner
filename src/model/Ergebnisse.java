@@ -10,6 +10,11 @@ public class Ergebnisse {
 		this.erg2 = erg2;
 
 	}
+	public Ergebnisse(String erg) {
+		String[] parts = erg.split(":");
+		this.erg1 = Integer.parseInt(parts[0]);
+		this.erg2 = Integer.parseInt(parts[1]);
+	}
 
 	public int getErg1() {
 		return erg1;
