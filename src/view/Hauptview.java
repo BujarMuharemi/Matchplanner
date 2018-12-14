@@ -8,6 +8,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
 import FileIO.OpenCSV;
+import FileIO.OpenXLS;
+import FileIO.OpenXLSX;
 import FileIO.SaveXLS;
 import model.*;
 import java.awt.event.ActionListener;
@@ -26,7 +28,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-
+import FileIO.SaveXLSX;
 /*
  * TODO-Feature#1: Anzahl der Spieltage auf JLabel in ZentralAnsicht zeigen
  * FIXME#3-Anzahl der Spieltage updates ich nicht wenn man csv lädt
@@ -118,16 +120,32 @@ public class Hauptview {
 		jfc.addChoosableFileFilter(filter3);
 
 		jfc.setFileFilter(filter2);
-		int returnValue = jfc.showOpenDialog(null);
+		int returnValue = (!dateiPathChoosen) ? jfc.showOpenDialog(null) : 0;
 
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			System.out.println("You selected the directory: " + jfc.getSelectedFile());
 			File selectedFile = jfc.getSelectedFile();
-			OpenCSV csvFile = new OpenCSV(selectedFile);
-			teams = csvFile.returnTeams();
-						
-			spieltageData.addTeam(teams);
-			spieltageData.createSpieltage();
-			
+
+			String path = jfc.getSelectedFile().getName();
+
+			if (path.substring(path.lastIndexOf("."), path.length()).equals(".xls")) {
+				OpenXLS openXLS = new OpenXLS(jfc.getSelectedFile().toString());
+				spieltageData.setSpielplan(openXLS.getSpieltabelle());
+
+			} else if (path.substring(path.lastIndexOf("."), path.length()).equals(".xlsx")) {
+				OpenXLSX openXLSX = new OpenXLSX(jfc.getSelectedFile().toString());
+				spieltageData.setSpielplan(openXLSX.getSpieltabelle());
+
+			} else if (path.substring(path.lastIndexOf("."), path.length()).equals(".csv")) {
+				OpenCSV csvFile = new OpenCSV(selectedFile);
+				teams = csvFile.returnTeams();
+				spieltageData.addTeam(teams);
+				spieltageData.createSpieltage();
+			}
+
+			dateiPathChoosen = true;
+			openedMatchplan();
+
 			a = true;
 		}
 
@@ -141,17 +159,34 @@ public class Hauptview {
 			jfc.setDialogTitle("Choose a directory to save your file: ");
 			jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 
+			// fillter für speichertypen
+			FileFilter filter = new FileNameExtensionFilter("XLS", "xls");
+			FileFilter filter2 = new FileNameExtensionFilter("CSV", "csv");
+			FileFilter filter3 = new FileNameExtensionFilter("XLSX", "xlsx");
+			FileFilter filter4 = new FileNameExtensionFilter("PDF", "pdf");
+			jfc.addChoosableFileFilter(filter);
+			jfc.addChoosableFileFilter(filter2);
+			jfc.addChoosableFileFilter(filter3);
+			jfc.addChoosableFileFilter(filter4);
+			jfc.setFileFilter(filter);
+
 			int returnValue = jfc.showSaveDialog(null);
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
 				if (jfc.getSelectedFile() != null) {
 					dateiPathChoosen = true;
 					System.out.println("You selected the directory: " + jfc.getSelectedFile());
-					
-					SaveXLS savexls = new SaveXLS(jfc.getSelectedFile().toString(), spieltageData);
-					
-					
+					String path = jfc.getSelectedFile().getName();
+					if (path.substring(path.lastIndexOf("."), path.length()).equals(".xls")) {
+						System.out.println("ist drin");
+						SaveXLS savexls = new SaveXLS(jfc.getSelectedFile().toString(), spieltageData);
+					} else if (path.substring(path.lastIndexOf("."), path.length()).equals(".xlsx")) {
+						SaveXLSX savexls = new SaveXLSX(jfc.getSelectedFile().toString(), spieltageData);
+					} else {
+						// TODO: pdf hier einbinden!
+					}
+
 					a = true;
-					
+
 				}
 			}
 		}
@@ -242,7 +277,8 @@ public class Hauptview {
 					gespeichert = true;
 					closedMatchplan();
 				}
-//				System.out.println("saved:"+gespeichert+"\tcloseNoSave "+closeNoSave+"\tpath "+dateiPathChoosen);
+				// System.out.println("saved:"+gespeichert+"\tcloseNoSave "+closeNoSave+"\tpath
+				// "+dateiPathChoosen);
 			}
 
 			public void windowLostFocus(WindowEvent arg0) {
@@ -267,7 +303,7 @@ public class Hauptview {
 				dateiGeoffnet = true;
 				// gespeichert = false;
 				if (gespeichert) {
-//					spieltageData.resetSpielTage();					
+					// spieltageData.resetSpielTage();
 				}
 				resetFlags();
 			}
@@ -351,7 +387,7 @@ public class Hauptview {
 					beendeProgramm = true;
 				}
 			}
-//			else if (!gespeichert && dateiGeoffnet && gespeichert) {
+			// else if (!gespeichert && dateiGeoffnet && gespeichert) {
 		});
 
 		menuDatei.add(mnitSpeichernunter);
@@ -403,7 +439,7 @@ public class Hauptview {
 
 		Zentralesicht.add(ZentralScrollen);
 
-//		System.out.println("DatenGet" + b.getN());
+		// System.out.println("DatenGet" + b.getN());
 		frame.repaint();
 
 		tabelle.addMouseListener(new MouseAdapter() {

@@ -1,4 +1,6 @@
 ﻿.metadata
+.classpath
+.project
 bin/
 tmp/
 *.tmp

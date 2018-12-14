@@ -27,17 +27,14 @@ public class SaveXLS {
 		saveXLS();
 	}
 
+
 	public void saveXLS() {
 		try (HSSFWorkbook wb = new HSSFWorkbook()) {
-				// TODO: tabelle als excel speichern mit arraylist weitergeben!
-				/*
-				 * CreationHelper helps us create instances of various things like DataFormat,
-				 * Hyperlink, RichTextString etc, in a format (HSSF, XSSF) independent way
-				 */
+
 				CreationHelper createHelper = wb.getCreationHelper();
 
 				// Create a Sheet
-				Sheet sheet = wb.createSheet("Employee");
+				Sheet sheet = wb.createSheet("Spielplan");
 
 				// Create a Font for styling header cells
 				Font headerFont = wb.createFont();
@@ -74,11 +71,7 @@ public class SaveXLS {
 
 					row.createCell(2).setCellValue(spiel.getErg().getErg1() +":" + spiel.getErg().getErg2());
 					
-					row.createCell(3).setCellValue(spiel.getDate().toString());
-
-//					Cell dateOfBirthCell = row.createCell(2);
-//					dateOfBirthCell.setCellValue(spiel.getDateOfBirth());
-//					dateOfBirthCell.setCellStyle(dateCellStyle);
+					row.createCell(3).setCellValue(spiel.toStringDate());
 
 				}
 
@@ -95,7 +88,6 @@ public class SaveXLS {
 				// Closing the workbook
 				wb.close();
 
-				wb.write(fileOut);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
