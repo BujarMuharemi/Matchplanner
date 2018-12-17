@@ -10,6 +10,7 @@ import javax.swing.filechooser.FileSystemView;
 import FileIO.OpenCSV;
 import FileIO.OpenXLS;
 import FileIO.OpenXLSX;
+import FileIO.SaveCSV;
 import FileIO.SaveXLS;
 import model.*;
 import java.awt.event.ActionListener;
@@ -181,6 +182,8 @@ public class Hauptview {
 						SaveXLS savexls = new SaveXLS(jfc.getSelectedFile().toString(), spieltageData);
 					} else if (path.substring(path.lastIndexOf("."), path.length()).equals(".xlsx")) {
 						SaveXLSX savexls = new SaveXLSX(jfc.getSelectedFile().toString(), spieltageData);
+					} else if (path.substring(path.lastIndexOf("."), path.length()).equals(".csv")) {
+						SaveCSV savecsv = new SaveCSV(jfc.getSelectedFile().toString(), spieltageData);
 					} else {
 						// TODO: pdf hier einbinden!
 					}
