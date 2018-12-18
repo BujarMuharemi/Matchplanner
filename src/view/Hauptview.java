@@ -11,6 +11,7 @@ import FileIO.OpenCSV;
 import FileIO.OpenXLS;
 import FileIO.OpenXLSX;
 import FileIO.SaveCSV;
+import FileIO.SavePDF;
 import FileIO.SaveXLS;
 import model.*;
 import java.awt.event.ActionListener;
@@ -185,9 +186,8 @@ public class Hauptview {
 					} else if (path.substring(path.lastIndexOf("."), path.length()).equals(".csv")) {
 						SaveCSV savecsv = new SaveCSV(jfc.getSelectedFile().toString(), spieltageData);
 					} else {
-						// TODO: pdf hier einbinden!
+						SavePDF savePDF = new SavePDF(jfc.getSelectedFile().toString(), spieltageData);
 					}
-
 					a = true;
 
 				}
