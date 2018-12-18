@@ -32,9 +32,17 @@ public class SavePDF {
 			PdfDocument pdfDoc = new PdfDocument(writer);
 			com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
 			Table tabel = new Table(daten.size());
+			tabel.addHeaderCell("Team1");
+			tabel.addHeaderCell("Team2");
+			tabel.addHeaderCell("Ergebnis");
+			tabel.addHeaderCell("Datum");
+			
 			for (Spiel spiel : daten) {
 				tabel.addCell(spiel.getM1().getName());
-				
+				tabel.addCell(spiel.getM2().getName());
+				tabel.addCell(spiel.getErg().getErg1() +":"+ spiel.getErg().getErg2());
+				tabel.addCell(spiel.toStringDate());
+				tabel.startNewRow();
 			}
 			document.add(tabel);
 			document.close();
