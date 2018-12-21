@@ -5,14 +5,11 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.text.Document;
 
 import model.Spiel;
 import model.TabelleSpielTage;
-import com.itextpdf.*;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 
 

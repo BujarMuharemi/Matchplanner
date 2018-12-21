@@ -15,6 +15,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	private List<Spiel> spielTage = new ArrayList<>();
 	private List<Spiel> spielTageOutput = spielTage;
+
 	public List<Spiel> getSpielTageOutput() {
 		return spielTageOutput;
 	}
@@ -30,9 +31,9 @@ public class TabelleSpielTage extends AbstractTableModel {
 		this.teams = teams;
 		fireTableStructureChanged();
 	}
-	
+
 	public void setSpielplan(List<Spiel> liste) {
-		this.spielTage=liste;
+		this.spielTage = liste;
 		updateSpieltage();
 		fireTableStructureChanged();
 	}
@@ -95,7 +96,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 	}
 
 	public void createSpieltage() {
-		int spielTageInt = teams.length;	
+		int spielTageInt = teams.length;
 		spielTageInt = (spielTageInt * (spielTageInt - 1)) / (spielTageInt / 2);
 		int spieleGesamt = (teams.length / 2) * spielTageInt;
 		spieleProTag = spieleGesamt / spielTageInt;
@@ -105,8 +106,8 @@ public class TabelleSpielTage extends AbstractTableModel {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		int counter = 0;
-		
-		//TODO: richtigen algo für teams
+
+		// TODO: richtigen algo für teams
 		// Hinspiele
 		for (int j = 0; j < teams.length - 1; j++) {
 			for (int k = j + 1; k < teams.length; k++) {
@@ -131,8 +132,10 @@ public class TabelleSpielTage extends AbstractTableModel {
 				addRow(teams[k], teams[j], new Ergebnisse(0, 0), date);
 			}
 		}
+
 		fireTableStructureChanged();
 		spielTage = spielTageOutput;
+		spieltagAlgo();
 	}
 
 	@Override
@@ -192,6 +195,7 @@ public class TabelleSpielTage extends AbstractTableModel {
 			}
 		}
 	}
+
 	@Override
 	public String getColumnName(int index) {
 		return columNames[index];
@@ -205,5 +209,39 @@ public class TabelleSpielTage extends AbstractTableModel {
 			a = true;
 		}
 		return a;
+	}
+
+	public void spieltagAlgo() {
+		List<Spiel> temp = new ArrayList<>();
+		int a = (spielTage.size() - 1) / 2;
+		int c = (spielTage.size()/2)/spieleProTag;
+		
+		for (int i = 0; i < spielTage.size(); i++) {			
+
+			if (i <= c-1) {
+				System.out.println(a);
+				temp.add(spielTage.get(i));
+				temp.add(spielTage.get(a - i));
+			} 
+		}
+		
+		for (int i = ((spielTage.size())/2); i < spielTage.size(); i++) {
+			int b = (spielTage.size()/2)/spieleProTag;
+			b=spielTage.size()-b;
+
+			if(i<b) {
+//				System.out.println(i+"-"+(spielTage.size()-i+a));
+				temp.add(spielTage.get(i));
+				temp.add(spielTage.get(spielTage.size()-i+a));
+			}
+			
+		}
+		
+
+		for (Spiel spiel : temp) {
+			// System.out.println(spiel.getM1().getName() + "-" + spiel.getM2().getName());
+		}
+		spielTage = temp;
+		fireTableStructureChanged();
 	}
 }

@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -24,20 +25,17 @@ import java.awt.event.WindowEvent;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.WindowFocusListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import FileIO.SaveXLSX;
 /*
  * FIXME#3-Anzahl der Spieltage updates ich nicht wenn man csv lädt
  * */
 
 public class Hauptview {
-	
-	//Klassenvariable
+
+	// Klassenvariable
 	int tabelleNum = 0;
 	private JFrame frame;
 	boolean gespeichert = false;
@@ -65,7 +63,10 @@ public class Hauptview {
 	JMenuItem mnitSpieltag = new JMenuItem("Spieltag bearbeiten");
 	JPanel Zentralesicht = new JPanel();
 	JPanel SpieltagAnsicht = new JPanel();
-	String path="";
+	String path = "";
+
+	JFrame gol = new GameOfLife();
+	boolean visible = false;
 
 	private void resetFlags() {
 		gespeichert = false;
@@ -157,14 +158,17 @@ public class Hauptview {
 				if (jfc.getSelectedFile() != null) {
 					dateiPathChoosen = true;
 					String ausgewaehltepfad = jfc.getSelectedFile().getName();
-					if(this.path.equals(".pdf")) {
+					if (this.path.equals(".pdf")) {
 						this.path = ausgewaehltepfad;
 					}
-					if (ausgewaehltepfad.substring(ausgewaehltepfad.lastIndexOf("."), ausgewaehltepfad.length()).equals(".xls")) {
+					if (ausgewaehltepfad.substring(ausgewaehltepfad.lastIndexOf("."), ausgewaehltepfad.length())
+							.equals(".xls")) {
 						SaveXLS savexls = new SaveXLS(jfc.getSelectedFile().toString(), spieltageData);
-					} else if (ausgewaehltepfad.substring(ausgewaehltepfad.lastIndexOf("."), ausgewaehltepfad.length()).equals(".xlsx")) {
+					} else if (ausgewaehltepfad.substring(ausgewaehltepfad.lastIndexOf("."), ausgewaehltepfad.length())
+							.equals(".xlsx")) {
 						SaveXLSX savexls = new SaveXLSX(jfc.getSelectedFile().toString(), spieltageData);
-					} else if (ausgewaehltepfad.substring(ausgewaehltepfad.lastIndexOf("."), ausgewaehltepfad.length()).equals(".csv")) {
+					} else if (ausgewaehltepfad.substring(ausgewaehltepfad.lastIndexOf("."), ausgewaehltepfad.length())
+							.equals(".csv")) {
 						SaveCSV savecsv = new SaveCSV(jfc.getSelectedFile().toString(), spieltageData);
 					} else {
 						SavePDF savePDF = new SavePDF(jfc.getSelectedFile().toString(), spieltageData);
@@ -175,6 +179,7 @@ public class Hauptview {
 		}
 		return a;
 	}
+
 	// Mannschaften setten
 	public void setMan(Mannschaften[] m) {
 		teams = m;
@@ -185,6 +190,7 @@ public class Hauptview {
 		spieltageData = new TabelleSpielTage(teams);
 		// Doesnt get called in real event
 	}
+
 	// spieltage werden berrechnet und weiter gegeben
 	public int getSpieltage() {
 		int n = (teams != null) ? teams.length : 4;
@@ -197,6 +203,7 @@ public class Hauptview {
 				try {
 					Hauptview window = new Hauptview();
 					window.frame.setVisible(true);
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -253,7 +260,7 @@ public class Hauptview {
 		frame.setResizable(false);
 		frame.setBounds(600, 200, 800, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		frame.setFocusable(true);
 		// Menueleiste wird erstellt mit den bestimmten Komponenten!
 		JMenuBar menubar = new JMenuBar();
 		frame.setJMenuBar(menubar);
@@ -405,13 +412,44 @@ public class Hauptview {
 			public void keyTyped(KeyEvent arg0) {
 				gespeichert = false;
 			}
+
 			@Override
 			public void keyReleased(KeyEvent arg0) {
 				gespeichert = false;
 			}
+
 			@Override
 			public void keyPressed(KeyEvent arg0) {
 				gespeichert = false;
+
+			}
+		});
+		
+		frame.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {
+				visible = !visible;
+				if (e.getKeyCode() == KeyEvent.VK_H) {
+					gol.setVisible(visible);
+					gol.setDefaultCloseOperation(1);
+					gol.setTitle("Game of Life");
+					gol.setSize(new Dimension(800, 600));
+					gol.setMinimumSize(new Dimension(800, 600));
+					gol.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - gol.getWidth()) / 2,
+							(Toolkit.getDefaultToolkit().getScreenSize().height - gol.getHeight()) / 2);
+				}
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+
 			}
 		});
 	}
