@@ -15,13 +15,14 @@ public class SaveCSV {
 	List<Spiel> daten = new ArrayList<>();
 
 	public SaveCSV(String path, TabelleSpielTage tabelle) {
+		// Konstruktor mit Speicherpfad übergabe 
 		this.path = path;
 		this.daten = tabelle.getSpielTageOutput();
-		
 		csvWriter();
 	}
 
 	public void csvWriter() {
+		// readXLSX ließt die Datentypen XLSX im pfad 
 		try {
 			PrintWriter pw = new PrintWriter(new File(this.path));
 			StringBuilder sb = new StringBuilder();
@@ -36,7 +37,6 @@ public class SaveCSV {
 			sb.append(';');
 			sb.append('\n');
 			// Daten werden aus der Tabelle zu CSV hinzugefügt
-			
 			for (Spiel spiel : daten) {
 				sb.append(spiel.getM1().getName());
 				sb.append(';');
@@ -47,13 +47,10 @@ public class SaveCSV {
 				sb.append(spiel.toStringDate());
 				sb.append(';');
 				sb.append('\n');
-				
 			}
-			
 			pw.write(sb.toString());
 			pw.close();
 			System.out.println("gespeichert");
-			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

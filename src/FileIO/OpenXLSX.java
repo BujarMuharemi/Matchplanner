@@ -24,21 +24,21 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class OpenXLSX {
-
+	// Klassenvariable
 	String path;
 	List<Spiel> daten = new ArrayList<>();
 	List<String> team1, team2, erg;
 	List<Date> datum;
 
 	public OpenXLSX(String openpath) {
-
+		// Konstruktor mit Dateipfad übergabe
 		this.path = openpath;
 		System.out.println(this.path);
 		readXLSX();
 	}
 
 	public void readXLSX() {
-
+		// readXLSX ließt die Datentypen XLSX im pfad 
 		try {
 			Workbook workbook = WorkbookFactory.create(new File(this.path));
 			Sheet sheet = workbook.getSheetAt(0);
@@ -52,10 +52,8 @@ public class OpenXLSX {
 						new Date());
 				spiel.fromStringtoDate(row.getCell(3).toString());
 				daten.add(spiel);
-
 			}
 			workbook.close();
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
