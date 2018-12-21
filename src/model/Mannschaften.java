@@ -1,7 +1,6 @@
 package model;
 
 public class Mannschaften {
-
 	private String name;
 
 	public Mannschaften(String name) {

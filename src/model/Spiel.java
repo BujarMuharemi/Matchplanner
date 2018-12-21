@@ -1,6 +1,5 @@
 package model;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -53,9 +52,7 @@ public class Spiel {
 	public String toStringDate() {
 		SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 		String datum = formatter.format(this.date);
-
 		return datum;
-
 	}
 	
 	public void fromStringtoDate(String datum) {
@@ -64,7 +61,6 @@ public class Spiel {
 		try {
 			date = format.parse(datum);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.date=date;

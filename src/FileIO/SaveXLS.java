@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import model.Spiel;
 import model.TabelleSpielTage;
@@ -20,22 +19,16 @@ public class SaveXLS {
 		this.path = path;
 		this.daten = tabelle.getSpielTageOutput();
 		this.columnNames = tabelle.columNames;
-		/*
-		 * for (Spiel spiel : daten) {
-		 * System.out.println(spiel.getM1().getName().toString()); }
-		 */
-		saveXLS();
-	}
 
+	}
 
 	public void saveXLS() {
 		try (HSSFWorkbook wb = new HSSFWorkbook()) {
-
 				CreationHelper createHelper = wb.getCreationHelper();
-
+				
 				// Create a Sheet
 				Sheet sheet = wb.createSheet("Spielplan");
-
+				
 				// Create a Font for styling header cells
 				Font headerFont = wb.createFont();
 				headerFont.setBold(true);
@@ -64,27 +57,19 @@ public class SaveXLS {
 				int rowNum = 1;
 				for (Spiel spiel : daten) {
 					Row row = sheet.createRow(rowNum++);
-
 					row.createCell(0).setCellValue(spiel.getM1().getName());
-
 					row.createCell(1).setCellValue(spiel.getM2().getName());
-
 					row.createCell(2).setCellValue(spiel.getErg().getErg1() +":" + spiel.getErg().getErg2());
-					
 					row.createCell(3).setCellValue(spiel.toStringDate());
-
 				}
-
 				// Resize all columns to fit the content size
 				for (int i = 0; i < columnNames.length; i++) {
 					sheet.autoSizeColumn(i);
 				}
-
 				// Write the output to a file
 				FileOutputStream fileOut = new FileOutputStream(path);
 				wb.write(fileOut);
 				fileOut.close();
-
 				// Closing the workbook
 				wb.close();
 

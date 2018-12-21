@@ -27,11 +27,8 @@ public class NewView extends JDialog {
 	private int nTeams = 0;
 	static NewView frame;
 	static Hauptview main = new Hauptview();
-
 	NewViewTabelle tabelle = new NewViewTabelle(4);
-	
 	private boolean erstellt = false;
-	
 	public boolean getErstellt() {
 		return erstellt;
 	}
@@ -125,7 +122,6 @@ public class NewView extends JDialog {
 					} else {
 						JOptionPane.showMessageDialog(null,
 								(nTeams < 4) ? "Mindestwert 4 Teams" : "Nur gerade Zahlen eingeben !");
-
 						textField.setText("");
 					}
 
@@ -153,8 +149,6 @@ public class NewView extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				// Tabelle wird weitergegeben
 				// und in Hauptview neue Tabelle erstellt!
-
-				// tabelle.sendTeams();
 				erstellt=true;
 				main.updateTeams();
 				dispose();

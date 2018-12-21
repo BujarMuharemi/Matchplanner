@@ -4,7 +4,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -15,7 +14,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.*;
 
 import model.Spiel;
-import model.Tabelle;
 import model.TabelleSpielTage;
 
 public class SaveXLSX {
@@ -38,9 +36,7 @@ public class SaveXLSX {
 	}
 
 	public void writeXLSXFile() throws IOException {
-
 		try (XSSFWorkbook wb = new XSSFWorkbook();) {
-
 			CreationHelper createHelper = wb.getCreationHelper();
 
 			// Create a Sheet
@@ -74,22 +70,15 @@ public class SaveXLSX {
 			int rowNum = 1;
 			for (Spiel spiel : daten) {
 				Row row = sheet.createRow(rowNum++);
-
 				row.createCell(0).setCellValue(spiel.getM1().getName());
-
 				row.createCell(1).setCellValue(spiel.getM2().getName());
-
 				row.createCell(2).setCellValue(spiel.getErg().getErg1() + ":" + spiel.getErg().getErg2());
-
 				row.createCell(3).setCellValue(spiel.toStringDate());
-
 			}
-
 			// Resize all columns to fit the content size
 			for (int i = 0; i < columnNames.length; i++) {
 				sheet.autoSizeColumn(i);
 			}
-
 			// Write the output to a file
 			FileOutputStream fileOut = new FileOutputStream(path);
 			wb.write(fileOut);

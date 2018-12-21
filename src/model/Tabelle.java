@@ -4,9 +4,7 @@ import javax.swing.table.AbstractTableModel;
 public class Tabelle extends AbstractTableModel {
 
 	private static final long serialVersionUID = 1L;
-
 	String[] columNames = { "SpielTag" };
-
 	private int size = 6;
 
 	public Tabelle(int size) {
@@ -15,14 +13,11 @@ public class Tabelle extends AbstractTableModel {
 
 	public void addSize(int n) {
 		this.size = n;	
-//		System.out.println("addSize: "+this.size);
 		fireTableStructureChanged();
-		
 	}
 	
 	public void setSize(int n) {		
 		this.size = n;		
-//		System.out.println("setSize: "+this.size);
 		fireTableStructureChanged();	
 	}
 	

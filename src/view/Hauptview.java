@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -24,45 +25,33 @@ import java.awt.event.WindowEvent;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.WindowFocusListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import FileIO.SaveXLSX;
 /*
- * TODO-Feature#1: Anzahl der Spieltage auf JLabel in ZentralAnsicht zeigen
  * FIXME#3-Anzahl der Spieltage updates ich nicht wenn man csv lädt
  * */
 
 public class Hauptview {
 
+	// Klassenvariable
 	int tabelleNum = 0;
 	private JFrame frame;
-
 	boolean gespeichert = false;
 	boolean dateiGeoffnet = false;
-
 	boolean dateiPathChoosen = false;
-
 	boolean closeNoSave = false;
 	boolean beendeProgramm = false;
-
 	boolean teamsErstellt = false;
-
 	public String openedFilePath = "";
-
 	private Mannschaften[] teams;
 	TabelleSpielTage spieltageData = new TabelleSpielTage(teams);
-	public Daten b = new Daten(5);
 	public BeendenView closeView = new BeendenView();
 	NewView newView = new NewView();
 	Tabelle table;
-
 	JMenu menuDatei = new JMenu("Datei");
 	JMenu mnextra = new JMenu("Edit/Bearbeiten");
-
 	JMenuItem mnitNeu = new JMenuItem("Neu");
 	JMenuItem mnitOffnen = new JMenuItem("Öffnen");
 	JMenuItem mnitSpeichern = new JMenuItem("Speichern");
@@ -70,12 +59,14 @@ public class Hauptview {
 	JMenuItem mnitBeenden = new JMenuItem("Beenden");
 	JMenuItem mnitDrucken = new JMenuItem("Drucken");
 	JMenuItem mnitClose = new JMenuItem("Schließen");
-
 	JMenuItem mnitMannschaftba = new JMenuItem("Mannschaft bearbeiten");
 	JMenuItem mnitSpieltag = new JMenuItem("Spieltag bearbeiten");
-
 	JPanel Zentralesicht = new JPanel();
 	JPanel SpieltagAnsicht = new JPanel();
+	String path = "";
+
+	JFrame gol = new GameOfLife();
+	boolean visible = false;
 
 	private void resetFlags() {
 		gespeichert = false;
@@ -101,17 +92,14 @@ public class Hauptview {
 		mnitSpeichernunter.setEnabled(b);
 		mnitDrucken.setEnabled(b);
 		mnitClose.setEnabled(b);
-
 		mnitMannschaftba.setEnabled(b);
 		mnitSpieltag.setEnabled(b);
-
 		Zentralesicht.setVisible(b);
 		SpieltagAnsicht.setVisible(b);
 	}
 
 	private boolean openWindow() {
 		boolean a = false;
-
 		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 		jfc.setApproveButtonText("Open");
 		FileFilter filter = new FileNameExtensionFilter("XLS", "xls");
@@ -120,14 +108,10 @@ public class Hauptview {
 		jfc.addChoosableFileFilter(filter);
 		jfc.addChoosableFileFilter(filter2);
 		jfc.addChoosableFileFilter(filter3);
-
 		jfc.setFileFilter(filter2);
 		int returnValue = (!dateiPathChoosen) ? jfc.showOpenDialog(null) : 0;
-
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
-			System.out.println("You selected the directory: " + jfc.getSelectedFile());
 			File selectedFile = jfc.getSelectedFile();
-
 			String path = jfc.getSelectedFile().getName();
 
 			if (path.substring(path.lastIndexOf("."), path.length()).equals(".xls")) {
@@ -144,13 +128,10 @@ public class Hauptview {
 				spieltageData.addTeam(teams);
 				spieltageData.createSpieltage();
 			}
-
 			dateiPathChoosen = true;
 			openedMatchplan();
-
 			a = true;
 		}
-
 		return a;
 	}
 
@@ -176,46 +157,38 @@ public class Hauptview {
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
 				if (jfc.getSelectedFile() != null) {
 					dateiPathChoosen = true;
-					System.out.println("You selected the directory: " + jfc.getSelectedFile());
-					String path = jfc.getSelectedFile().getName();
-					if (path.substring(path.lastIndexOf("."), path.length()).equals(".xls")) {
-						System.out.println("ist drin");
+					String ausgewaehltepfad = jfc.getSelectedFile().getName();
+					if (this.path.equals(".pdf")) {
+						this.path = ausgewaehltepfad;
+					}
+					if (ausgewaehltepfad.substring(ausgewaehltepfad.lastIndexOf("."), ausgewaehltepfad.length())
+							.equals(".xls")) {
 						SaveXLS savexls = new SaveXLS(jfc.getSelectedFile().toString(), spieltageData);
-					} else if (path.substring(path.lastIndexOf("."), path.length()).equals(".xlsx")) {
+					} else if (ausgewaehltepfad.substring(ausgewaehltepfad.lastIndexOf("."), ausgewaehltepfad.length())
+							.equals(".xlsx")) {
 						SaveXLSX savexls = new SaveXLSX(jfc.getSelectedFile().toString(), spieltageData);
-					} else if (path.substring(path.lastIndexOf("."), path.length()).equals(".csv")) {
+					} else if (ausgewaehltepfad.substring(ausgewaehltepfad.lastIndexOf("."), ausgewaehltepfad.length())
+							.equals(".csv")) {
 						SaveCSV savecsv = new SaveCSV(jfc.getSelectedFile().toString(), spieltageData);
 					} else {
 						SavePDF savePDF = new SavePDF(jfc.getSelectedFile().toString(), spieltageData);
 					}
 					a = true;
-
 				}
 			}
 		}
-
 		return a;
 	}
 
 	// Mannschaften setten
 	public void setMan(Mannschaften[] m) {
 		teams = m;
-		// System.out.println("setMan"+getSpieltage());
-		// tabel.addSize(getSpieltage());
-		// spielTage = getSpieltage();
-
-		// table.addSize(spielTage);
-		// frame.repaint();
-
 		updateTeams();
-		// initialize();
-
 	}
 
 	public void updateTeams() {
 		spieltageData = new TabelleSpielTage(teams);
 		// Doesnt get called in real event
-
 	}
 
 	// spieltage werden berrechnet und weiter gegeben
@@ -230,6 +203,7 @@ public class Hauptview {
 				try {
 					Hauptview window = new Hauptview();
 					window.frame.setVisible(true);
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -243,7 +217,6 @@ public class Hauptview {
 
 	private void initialize() {
 		frame = new JFrame();
-
 		frame.addWindowFocusListener(new WindowFocusListener() {
 			public void windowGainedFocus(WindowEvent arg0) {
 				table.addSize(newView.getSpieltage());
@@ -256,9 +229,7 @@ public class Hauptview {
 				}
 
 				if (closeView.getButtonChoice() == 1 && closeNoSave && !gespeichert) {
-
 					boolean a = saveWindow();
-
 					if (a) {
 						gespeichert = true;
 						closedMatchplan();
@@ -280,8 +251,6 @@ public class Hauptview {
 					gespeichert = true;
 					closedMatchplan();
 				}
-				// System.out.println("saved:"+gespeichert+"\tcloseNoSave "+closeNoSave+"\tpath
-				// "+dateiPathChoosen);
 			}
 
 			public void windowLostFocus(WindowEvent arg0) {
@@ -291,28 +260,23 @@ public class Hauptview {
 		frame.setResizable(false);
 		frame.setBounds(600, 200, 800, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		frame.setFocusable(true);
 		// Menueleiste wird erstellt mit den bestimmten Komponenten!
 		JMenuBar menubar = new JMenuBar();
 		frame.setJMenuBar(menubar);
-
 		menubar.add(menuDatei);
 		menubar.add(mnextra);
-
 		mnitNeu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				newView.setVisible(true);
 				openedMatchplan();
 				dateiGeoffnet = true;
-				// gespeichert = false;
 				if (gespeichert) {
-					// spieltageData.resetSpielTage();
 				}
 				resetFlags();
 			}
 		});
 		menuDatei.add(mnitNeu);
-
 		mnitOffnen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (openWindow()) {
@@ -325,7 +289,6 @@ public class Hauptview {
 			}
 		});
 		menuDatei.add(mnitOffnen);
-
 		mnitSpeichern.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -335,19 +298,15 @@ public class Hauptview {
 				} else {
 					gespeichert = true;
 				}
-
 			}
 		});
 		menuDatei.add(mnitSpeichern);
-
 		mnitSpeichernunter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				saveWindow();
 			}
 		});
-
 		mnitClose.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
 				if (gespeichert == true && dateiPathChoosen) {
 					dateiGeoffnet = false;
@@ -359,10 +318,8 @@ public class Hauptview {
 				}
 			}
 		});
-
 		mnitMannschaftba.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// spieltageData.editTeams();
 				newView.setVisible(true);
 				spieltageData.setEditTeam(true);
 				teamsErstellt = false;
@@ -370,14 +327,12 @@ public class Hauptview {
 			}
 		});
 		mnextra.add(mnitMannschaftba);
-
 		mnitSpieltag.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				spieltageData.editDates();
 				gespeichert = false;
 			}
 		});
-
 		mnitBeenden.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (!gespeichert && !dateiGeoffnet) {
@@ -390,13 +345,16 @@ public class Hauptview {
 					beendeProgramm = true;
 				}
 			}
-			// else if (!gespeichert && dateiGeoffnet && gespeichert) {
 		});
-
 		menuDatei.add(mnitSpeichernunter);
+		mnitDrucken.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				path = ".pdf";
+				saveWindow();
+			}
+		});
 		menuDatei.add(mnitDrucken);
 		menuDatei.add(mnitClose);
-
 		mnextra.add(mnitSpieltag);
 		menuDatei.add(mnitBeenden);
 
@@ -421,28 +379,17 @@ public class Hauptview {
 		gbc_SpieltagAnsicht.gridx = 1;
 		gbc_SpieltagAnsicht.gridy = 0;
 
-		// tabel.addSize(spielTage);
-
 		// Tabellen werden erstellt
-		table = new Tabelle(b.getN());
-		// spieltageData = new TabelleSpielTage(newView.getTeams());
-		// spieltageData.addTeam(newView.getTeams());
-
+		table = new Tabelle(5);
 		JTable tabelle = new JTable(table);
-
 		JTable spielTageTabelle = new JTable(spieltageData);
-
 		JScrollPane SpielTagScrollen = new JScrollPane(tabelle);
 		JScrollPane ZentralScrollen = new JScrollPane(spielTageTabelle);
 
 		frame.getContentPane().add(SpieltagAnsicht, gbc_SpieltagAnsicht);
 		SpieltagAnsicht.setLayout(new BorderLayout(0, 0));
-
 		SpieltagAnsicht.add(SpielTagScrollen);
-
 		Zentralesicht.add(ZentralScrollen);
-
-		// System.out.println("DatenGet" + b.getN());
 		frame.repaint();
 
 		tabelle.addMouseListener(new MouseAdapter() {
@@ -474,9 +421,37 @@ public class Hauptview {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
 				gespeichert = false;
+
 			}
 		});
+		
+		frame.addKeyListener(new KeyListener() {
 
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {
+				visible = !visible;
+				if (e.getKeyCode() == KeyEvent.VK_H) {
+					gol.setVisible(visible);
+					gol.setDefaultCloseOperation(1);
+					gol.setTitle("Game of Life");
+					gol.setSize(new Dimension(800, 600));
+					gol.setMinimumSize(new Dimension(800, 600));
+					gol.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width - gol.getWidth()) / 2,
+							(Toolkit.getDefaultToolkit().getScreenSize().height - gol.getHeight()) / 2);
+				}
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 	}
 
 	public void setGespeichert(boolean n) {
@@ -490,5 +465,4 @@ public class Hauptview {
 	public void setGeoffnet(boolean n) {
 		dateiGeoffnet = n;
 	}
-
 }

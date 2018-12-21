@@ -19,9 +19,8 @@ public class BeendenView extends JFrame {
 	private JPanel contentPane;
 	private static BeendenView frame = new BeendenView();
 	private int buttonChoice = 0;
-	
-	private boolean beendenWas=false;
-	
+	private boolean beendenWas = false;
+
 	public boolean getBeendenWas() {
 		return beendenWas;
 	}
@@ -29,16 +28,15 @@ public class BeendenView extends JFrame {
 	public int getButtonChoice() {
 		return buttonChoice;
 	}
-	
+
 	public int setButtonChoice(int n) {
-		return buttonChoice=n;
+		return buttonChoice = n;
 	}
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -77,7 +75,7 @@ public class BeendenView extends JFrame {
 		btnJa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonChoice = 1;
-				beendenWas=true;			
+				beendenWas = true;
 				dispose();
 				// Methode aufrufen um flaggs zurückzu setzten!!
 			}
@@ -88,7 +86,7 @@ public class BeendenView extends JFrame {
 		btnNein.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				buttonChoice = 0;
-				beendenWas=false;
+				beendenWas = false;
 				dispose();
 			}
 		});
@@ -99,7 +97,7 @@ public class BeendenView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// Das Fenster beendenview schließen und programm weiter arbeiten können!
 				buttonChoice = -1;
-				beendenWas=false;
+				beendenWas = false;
 				dispose();
 			}
 		});

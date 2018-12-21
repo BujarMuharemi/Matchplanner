@@ -1,9 +1,7 @@
 package model;
 
 public class Ergebnisse {
-	
 	int erg1,erg2;
-
 	
 	public Ergebnisse(int erg1, int erg2) {
 		this.erg1 = erg1;
@@ -34,7 +32,6 @@ public class Ergebnisse {
 	
 	public String toString() {
 		return this.erg1+":"+this.erg2;
-		
 	}
 	//TODO#3.1: diese methode fixen/oder einen string constructer erstellen
 	public void setErg(String e) {

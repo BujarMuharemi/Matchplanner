@@ -8,24 +8,13 @@ public class NewViewTabelle extends AbstractTableModel {
 	private int size = 1;
 	String[] columNames = { "ID", "Teams" };
 
-	// Gui mainGUI = new Gui();
-
 	private Mannschaften[] teams; // Speichert die teamName
-
-	// public void sendTeams() {
-	// mainGUI.setMan(this.teams);
-	//// for (int i = 0; i < teams.length; i++) {
-	//// System.out.println("\t" + teams[i].getName());
-	//// }
-	// mainGUI.b.setN(teams.length);
-	// }
 
 	public Mannschaften[] getTeams() {
 		return teams;
 	}
 
 	public int getSpieltage() {
-//		System.out.println(teams.length);
 		int n = (teams != null) ? teams.length : 4;
 		return (n * (n - 1)) / (n / 2);
 	}
@@ -35,7 +24,6 @@ public class NewViewTabelle extends AbstractTableModel {
 		for (int i = 0; i < teams.length; i++) {
 			teams[i] = new Mannschaften("<bitte aendern>");
 		}
-		// sendTeams();
 	}
 
 	public NewViewTabelle(int size) {
@@ -65,7 +53,6 @@ public class NewViewTabelle extends AbstractTableModel {
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		if (teams != null) {
 			teams[rowIndex] = new Mannschaften(aValue.toString());
-			// System.out.println(rowIndex + ":" + teams[rowIndex].getName());
 		}
 	}
 
