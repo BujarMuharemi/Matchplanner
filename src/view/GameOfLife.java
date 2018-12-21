@@ -12,34 +12,20 @@ public class GameOfLife extends JFrame implements ActionListener, KeyListener {
 	private static final int BLOCK_SIZE = 10;
 
 	private int secondentakt = 3;
-	private GameBoard gb_gameBoard;
-	private Thread game;
-
-	// public static void main(String[] args) {
-	// // Setup the swing specifics
-	// JFrame game = new GameOfLife();
-	// game.setDefaultCloseOperation(0);
-	// game.setTitle("Game of Life");
-	// game.setSize(DEFAULT_WINDOW_SIZE);
-	// game.setMinimumSize(MINIMUM_WINDOW_SIZE);
-	// game.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width -
-	// game.getWidth()) / 2,
-	// (Toolkit.getDefaultToolkit().getScreenSize().height - game.getHeight()) / 2);
-	// game.setVisible(true);
-	// }
+	private GameBoard spielfeld;
+	private Thread thspiel;
 
 	public GameOfLife() {
-		// Setup game board
-		gb_gameBoard = new GameBoard();
-		add(gb_gameBoard);
+		spielfeld = new GameBoard();
+		add(spielfeld);
 	}
 
-	public void setGameBeingPlayed(boolean isBeingPlayed) {
-		if (isBeingPlayed) {
-			game = new Thread(gb_gameBoard);
-			game.start();
+	public void setGameBeingPlayed(boolean isAmLaufen) {
+		if (isAmLaufen) {
+			thspiel = new Thread(spielfeld);
+			thspiel.start();
 		} else {
-			game.interrupt();
+			thspiel.interrupt();
 		}
 	}
 
@@ -49,9 +35,6 @@ public class GameOfLife extends JFrame implements ActionListener, KeyListener {
 
 	private class GameBoard extends JPanel
 			implements ComponentListener, MouseListener, MouseMotionListener, KeyListener, Runnable {
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
 		int index = 1;
 		Integer[] secondOptions = { 1, 2, 3, 4, 5, 10, 15, 20 };
@@ -59,7 +42,6 @@ public class GameOfLife extends JFrame implements ActionListener, KeyListener {
 		private ArrayList<Point> point = new ArrayList<Point>(0);
 
 		public GameBoard() {
-			// Add resizing listener
 			addComponentListener(this);
 			addMouseListener(this);
 			addMouseMotionListener(this);
@@ -93,7 +75,7 @@ public class GameOfLife extends JFrame implements ActionListener, KeyListener {
 			}
 		}
 
-		public void resetBoard() {
+		public void resetFeld() {
 			point.clear();
 		}
 
@@ -102,13 +84,10 @@ public class GameOfLife extends JFrame implements ActionListener, KeyListener {
 			super.paintComponent(g);
 			try {
 				for (Point newPoint : point) {
-					// Draw new point
 					g.setColor(Color.blue);
 					g.fillRect(BLOCK_SIZE + (BLOCK_SIZE * newPoint.x), BLOCK_SIZE + (BLOCK_SIZE * newPoint.y),
 							BLOCK_SIZE, BLOCK_SIZE);
 				}
-
-				// Setup grid
 				g.setColor(Color.BLACK);
 				for (int i = 0; i <= d_gameBoardSize.width; i++) {
 					g.drawLine(((i * BLOCK_SIZE) + BLOCK_SIZE), BLOCK_SIZE, (i * BLOCK_SIZE) + BLOCK_SIZE,
@@ -125,7 +104,6 @@ public class GameOfLife extends JFrame implements ActionListener, KeyListener {
 
 		@Override
 		public void componentResized(ComponentEvent e) {
-			// Setup the game board size with proper boundries
 			d_gameBoardSize = new Dimension(getWidth() / BLOCK_SIZE - 2, getHeight() / BLOCK_SIZE - 2);
 			updateArraySize();
 		}
@@ -152,7 +130,6 @@ public class GameOfLife extends JFrame implements ActionListener, KeyListener {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			// Mouse was released (user clicked)
 			addPoint(e);
 		}
 
@@ -166,7 +143,6 @@ public class GameOfLife extends JFrame implements ActionListener, KeyListener {
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			// Mouse is being dragged, user wants multiple selections
 			addPoint(e);
 		}
 
@@ -176,54 +152,51 @@ public class GameOfLife extends JFrame implements ActionListener, KeyListener {
 
 		@Override
 		public void run() {
-			boolean[][] gameBoard = new boolean[d_gameBoardSize.width + 2][d_gameBoardSize.height + 2];
+			boolean[][] spielfeld = new boolean[d_gameBoardSize.width + 2][d_gameBoardSize.height + 2];
 			for (Point current : point) {
-				gameBoard[current.x + 1][current.y + 1] = true;
+				spielfeld[current.x + 1][current.y + 1] = true;
 			}
-			ArrayList<Point> survivingCells = new ArrayList<Point>(0);
-			// Iterate through the array, follow game of life rules
-			for (int i = 1; i < gameBoard.length - 1; i++) {
-				for (int j = 1; j < gameBoard[0].length - 1; j++) {
-					int surrounding = 0;
-					if (gameBoard[i - 1][j - 1]) {
-						surrounding++;
+			ArrayList<Point> lebendezellen = new ArrayList<Point>(0);
+			for (int i = 1; i < spielfeld.length - 1; i++) {
+				for (int j = 1; j < spielfeld[0].length - 1; j++) {
+					int umfeld = 0;
+					if (spielfeld[i - 1][j - 1]) {
+						umfeld++;
 					}
-					if (gameBoard[i - 1][j]) {
-						surrounding++;
+					if (spielfeld[i - 1][j]) {
+						umfeld++;
 					}
-					if (gameBoard[i - 1][j + 1]) {
-						surrounding++;
+					if (spielfeld[i - 1][j + 1]) {
+						umfeld++;
 					}
-					if (gameBoard[i][j - 1]) {
-						surrounding++;
+					if (spielfeld[i][j - 1]) {
+						umfeld++;
 					}
-					if (gameBoard[i][j + 1]) {
-						surrounding++;
+					if (spielfeld[i][j + 1]) {
+						umfeld++;
 					}
-					if (gameBoard[i + 1][j - 1]) {
-						surrounding++;
+					if (spielfeld[i + 1][j - 1]) {
+						umfeld++;
 					}
-					if (gameBoard[i + 1][j]) {
-						surrounding++;
+					if (spielfeld[i + 1][j]) {
+						umfeld++;
 					}
-					if (gameBoard[i + 1][j + 1]) {
-						surrounding++;
+					if (spielfeld[i + 1][j + 1]) {
+						umfeld++;
 					}
-					if (gameBoard[i][j]) {
-						// Cell is alive, Can the cell live? (2-3)
-						if ((surrounding == 2) || (surrounding == 3)) {
-							survivingCells.add(new Point(i - 1, j - 1));
+					if (spielfeld[i][j]) {
+						if ((umfeld == 2) || (umfeld == 3)) {
+							lebendezellen.add(new Point(i - 1, j - 1));
 						}
 					} else {
-						// Cell is dead, will the cell be given birth? (3)
-						if (surrounding == 3) {
-							survivingCells.add(new Point(i - 1, j - 1));
+						if (umfeld == 3) {
+							lebendezellen.add(new Point(i - 1, j - 1));
 						}
 					}
 				}
 			}
-			resetBoard();
-			point.addAll(survivingCells);
+			resetFeld();
+			point.addAll(lebendezellen);
 			repaint();
 			try {
 				Thread.sleep(1000 / secondentakt);
@@ -239,8 +212,8 @@ public class GameOfLife extends JFrame implements ActionListener, KeyListener {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_R) {
-				gb_gameBoard.resetBoard();
-				gb_gameBoard.repaint();
+				spielfeld.resetFeld();
+				spielfeld.repaint();
 			} else if (e.getKeyCode() == KeyEvent.VK_S) {
 				setGameBeingPlayed(true);
 			} else if (e.getKeyCode() == KeyEvent.VK_P) {
@@ -262,7 +235,6 @@ public class GameOfLife extends JFrame implements ActionListener, KeyListener {
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			// TODO Auto-generated method stub
 		}
 
 	}
